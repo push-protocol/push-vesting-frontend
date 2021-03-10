@@ -27,7 +27,10 @@ import Home from 'pages/Home';
 import Header from 'segments/Header';
 
 import * as dotenv from "dotenv";
+import "./stylesheets/TokenVestingApp.css";
+
 dotenv.config();
+
 
 const connectorsByName: { [name: string]: AbstractConnector } = {
   Injected: injected,
@@ -240,12 +243,12 @@ function App() {
         <ParentContainer>
         {(active) && !error && (
           <HomeContainer>
+            {/* <TokenVestingApp address={"0x0F4408e4ACa6A586bF60199A133554252a336d3c"} token={"0xB5752932244493139638f21A9ad0eb3feA81354c"} /> */}
             <Home
               setBadgeCount={setBadgeCount}
               bellPressed={bellPressed}
             />
           </HomeContainer>
-
         )}
 
         {!active &&
@@ -303,7 +306,6 @@ function App() {
               gridTemplateColumns: 'fit-content',
               maxWidth: '20rem',
               margin: 'auto',
-              marginTop: '1200px'
             }}
           >
             {(active || error) && (
@@ -406,7 +408,6 @@ function App() {
   );
 }
 
-
 // CSS STYLES
 const HeaderContainer = styled.div`
   height: 55px;
@@ -502,17 +503,3 @@ const ProviderLabel = styled.span`
   font-size: 12px;
   margin: 5px;
 `
-
-const StyledContainer = styled(ToastContainer).attrs({
-  // custom props
-})`
-  .Toastify__toast-container {}
-  .Toastify__toast {}
-  .Toastify__toast--error {}
-  .Toastify__toast--warning {}
-  .Toastify__toast--success {}
-  .Toastify__toast-body {
-    font-size: 12px;
-  }
-  .Toastify__progress-bar {}
-`;

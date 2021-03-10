@@ -1,0 +1,54 @@
+.BuyComponent {
+  background-color: #fafbfc;
+  text-align: center;
+}
+
+.BuyComponent h2 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.BuyComponent span {
+  color: #333;
+  font-size: 14px;
+}
+
+.BuyComponent .buttonBuy {
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  border: 0.1em solid #323232;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 0.12em;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-weight: 300;
+  color: #323232;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.BuyComponent .buttonBuy:hover {
+  color: white;
+  background-color: #323232;
+}
+
+.BuyComponent .inputBuy {
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  border: 0.1em solid #323232;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 0.12em;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-weight: 300;
+  color: #323232;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+@media all and (max-width: 30em) {
+  .BuyComponent .buttonBuy {
+    display: block;
+    margin: 0.2em auto;
+  }
+}

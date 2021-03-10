@@ -7,9 +7,6 @@ import './index.css';
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
-import { Web3ReactProvider } from '@web3-react/core'
-import { ethers } from "ethers";
-
 import * as dotenv from "dotenv";
 dotenv.config();
 

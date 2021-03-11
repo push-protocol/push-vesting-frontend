@@ -41,7 +41,7 @@ function Home({ setBadgeCount, bellPressed }) {
       </Controls>
       <Interface>
         {controlAt == 3 &&
-          <TokenVestingApp address={"0x0F4408e4ACa6A586bF60199A133554252a336d3c"} token={"0xB5752932244493139638f21A9ad0eb3feA81354c"} />
+          <TokenVestingApp address={"0xD2f08fAFc6211aF7240b18ca67067f51E6203960"} token={"0xEC4c1C91cEE6C5764c7587E94792a7cBF2Bd053E"} />
         }
       </Interface>
     </Container>

@@ -10,5 +10,10 @@ function TokenLink({ address, name }) {
   return <a href={ href } target="_blank">{ name }</a>
 }
 
+function TransactionLink( hash ) {
+  const href = `https://etherscan.io/tx/${hash}`
+  return href
+}
 
-export { ContractLink, TokenLink }
+
+export { ContractLink, TokenLink, TransactionLink }

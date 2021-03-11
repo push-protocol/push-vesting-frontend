@@ -83,6 +83,7 @@ const TokenVestingApp = ({ address, token }) => {
 
 const Container = styled.div`
   // display: flex;
+  padding: 2rem;
 `;
 
 export default TokenVestingApp;

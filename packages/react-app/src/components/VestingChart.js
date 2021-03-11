@@ -21,7 +21,7 @@ const VestingChart = ({ details }) => {
     const now = ethers.BigNumber.from(Math.floor(new Date() / 1000)); // normalize to seconds
 
     const points = [getDataPointAt(start)];
-
+    
     // Add signitificant datapoints. Order matters.
     if (cliff.lt(now)) {
       points.push(getDataPointAt(cliff));
@@ -54,6 +54,16 @@ const VestingChart = ({ details }) => {
   function getAmountAt(date) {
     const { total, start, end, decimals } = details;
     const slope = date.sub(start).div(end.sub(start));
+    console.log('data - start', date.sub(start).toString())
+    console.log('end - start', end.sub(start).toString())
+    console.log('data - start', date.sub(start).toString())
+    console.log('total', total.toString())
+    console.log('calculated', displayAmount(total, decimals))
+    console.log('date', date.toString())
+    console.log('start', start.toString())
+    console.log('end', end.toString())
+    console.log('start', start.toString())
+    console.log('slope', slope.toString())
 
     return ethers.BigNumber.from(displayAmount(total, decimals))
       .mul(slope)

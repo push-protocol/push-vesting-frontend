@@ -52,6 +52,16 @@ const VestingDetails = ({ address, token, details, getData, setLoader }) => {
         draggable: true,
         progress: undefined,
       });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       getData()
     } catch (e) {
       toast.dark(e.message, {

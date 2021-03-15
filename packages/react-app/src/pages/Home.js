@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import ReactGA from 'react-ga';
 
 import styled, { css } from 'styled-components';
@@ -6,21 +6,19 @@ import styled, { css } from 'styled-components';
 import { useWeb3React } from '@web3-react/core'
 import TokenVestingApp from "../components/TokenVestingApp";
 
-
 // Create Header
 function Home({ setBadgeCount, bellPressed }) {
   ReactGA.pageview('/home');
 
   const { active, error, account, library, chainId } = useWeb3React();
-
-  const [controlAt, setControlAt] = React.useState(0);
+  const [controlAt, setControlAt] = React.useState(0);  
 
   React.useEffect(() => {
     // Reset when account refreshes
     userClickedAt(3);
-
   }, []);
 
+  
   // handle user action at control center
   const userClickedAt = (controlIndex) => {
     setControlAt(controlIndex);
@@ -41,7 +39,7 @@ function Home({ setBadgeCount, bellPressed }) {
       </Controls>
       <Interface>
         {controlAt == 3 &&
-          <TokenVestingApp address={"0xD2f08fAFc6211aF7240b18ca67067f51E6203960"} token={"0xEC4c1C91cEE6C5764c7587E94792a7cBF2Bd053E"} />
+          <TokenVestingApp />
         }
       </Interface>
     </Container>

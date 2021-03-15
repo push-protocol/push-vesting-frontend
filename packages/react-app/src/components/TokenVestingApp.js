@@ -8,74 +8,119 @@ import VestingDetails from "./VestingDetails";
 import VestingSchedule from "./VestingSchedule";
 import Spinner from "./Spinner";
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
+import { addresses, abis } from "@project/contracts";
+import { queryVestingLink } from "../utils";
+import { toast } from 'react-toastify';
 
-const TokenVestingApp = ({ address, token }) => {
+const TokenVestingApp = () => {
   const [details, setDetails] = useState(null);
+  const [ isSearchingVesting, setIsSearchingVesting ] = React.useState(true)
   const [loading, setLoader] = useState(true);
   const { active, error, account, library, chainId } = useWeb3React();
+  const [ vestingAddress, setVestingAddress ] = React.useState('');
+
+  const getVestingLink = useCallback(async () => {
+    try {
+      setIsSearchingVesting(true)
+      setLoader(true)
+      const vestingContractAddress = await queryVestingLink(library, account)
+      setVestingAddress(vestingContractAddress);
+      setLoader(false)
+      setIsSearchingVesting(false)
+    } catch (error) {
+      toast.dark('Some error occured, please try again later', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  }, [account])
 
   const getData = useCallback(async () => {
-    const tokenVesting = await getTokenVesting(address, library, account);
-    const tokenContract = await getSimpleToken(token, library, account);
-    const start = await tokenVesting.start();
-    const duration = await tokenVesting.duration();
-    const end = start.add(duration);
+    if(vestingAddress != ''){
+      setLoader(true)
+      const tokenVesting = await getTokenVesting(vestingAddress, library, account);
+      const tokenContract = await getSimpleToken(library, account);
 
-    const balance = await tokenContract.balanceOf(address);
-    const released = await tokenVesting.released(token);
-    const total = balance.add(released);
+      const start = await tokenVesting.start();
+      const duration = await tokenVesting.duration();
+      const end = start.add(duration);
+      const balance = await tokenContract.balanceOf(vestingAddress);
+      const released = await tokenVesting.released(addresses.epnsToken);
+      const total = balance.add(released);
 
-    const cliff = await tokenVesting.cliff();
-    const decimals = await tokenContract.decimals();
-    const beneficiary = await tokenVesting.beneficiary();
-    const owner = await tokenVesting.owner();
-    const revocable = await tokenVesting.revocable();
-    const revoked = await tokenVesting.revoked(token);
-    const name = await tokenContract.name();
-    const symbol = await tokenContract.symbol();
-    const vested = await tokenVesting.vestedAmount(token);
-    // const vested = 1
-    setDetails({
-      start,
-      end,
-      cliff,
-      total,
-      released,
-      vested,
-      decimals,
-      beneficiary,
-      owner,
-      revocable,
-      revoked,
-      name,
-      symbol,
-      loading: false,
-    });
+      const cliff = await tokenVesting.cliff();
+      const decimals = await tokenContract.decimals();
+      const beneficiary = await tokenVesting.beneficiary();
+      const owner = await tokenVesting.owner();
+      const revocable = await tokenVesting.revocable();
+      const revoked = await tokenVesting.revoked(addresses.epnsToken);
+      const name = await tokenContract.name();
 
-    setLoader(false);
-  }, [address]);
+      const symbol = await tokenContract.symbol();
+      const vested = await tokenVesting.vestedAmount(addresses.epnsToken);
+      // const vested = 1
+      setDetails({
+        start,
+        end,
+        cliff,
+        total,
+        released,
+        vested,
+        decimals,
+        beneficiary,
+        owner,
+        revocable,
+        revoked,
+        name,
+        symbol,
+        loading: false,
+      });
+
+      setLoader(false);
+    } else {
+      setLoader(false)
+      setDetails(null)
+    }
+  }, [vestingAddress]);
 
   useEffect(() => {
     getData();
   }, [getData]);
 
+  useEffect(() => {
+    getVestingLink();
+  }, [getVestingLink])
+
   return (
     <div>
-      <Header address={address} token={token} tokenName={"$PUSH"} />
-
+      {loading ? <Spinner /> : null}
+      {
+        !isSearchingVesting && vestingAddress == '' ? (
+          <Container>
+            No Vesting Contract found for this address
+          </Container>
+        ) : null
+      }
       {details ? (
-        <Container>
-          {loading ? <Spinner /> : null}
 
+      <div>
+        <Header address={vestingAddress} token={addresses.epnsToken} tokenName={"$PUSH"} />
+        <Container>
           <VestingDetails
-            address={address}
-            token={token}
+            address={vestingAddress}
+            token={addresses.epnsToken}
             details={details}
             getData={getData}
             setLoader={setLoader}
           />
           <VestingSchedule details={details} />
         </Container>
+      </div>
       ) : null}
     </div>
   );

@@ -6,6 +6,10 @@ export function displayAmount(amount, decimals) {
   return amount.div(ethers.BigNumber.from(10).pow(ethers.BigNumber.from(18))).toString()
 }
 
+export function tokensToBn(amount) {
+  return ethers.BigNumber.from(amount).mul(ethers.BigNumber.from(10).pow(ethers.BigNumber.from(18)))
+}
+
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }

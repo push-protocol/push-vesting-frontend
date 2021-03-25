@@ -11,7 +11,6 @@ import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 import { toast } from 'react-toastify';
 
 const VestingDetails = ({ address, token, details, getData, setLoader }) => {
-  const [ canRevoke, setRevoke ] = React.useState(true);
   const { active, error, account, library, chainId } = useWeb3React();
   const { start, cliff, end, total, released, vested, revocable, beneficiary } = details
   const releasable = vested ? vested.sub(released) : null
@@ -29,69 +28,9 @@ const VestingDetails = ({ address, token, details, getData, setLoader }) => {
     return `${display} ${symbol}`
   }
 
-  function startLoader() {
-    setLoader(true)
-  }
-
-  function stopLoader() {
-    setLoader(false)
-  }
-
-  async function onRelease() {
-    const tokenVesting = await getTokenVesting(address, library, account);
-
-    try {
-      startLoader()
-      const tx = await tokenVesting.release(token)
-      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      const receipt = await tx.wait()
-      toast.dark("Transaction Successful", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      getData()
-    } catch (e) {
-      toast.dark(e.message, {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      stopLoader()
-    }
-  }
-
-  // async function onRevoke() {
-  //   const tokenVesting = await getTokenVesting(address, library, account);
-
-  //   try {
-  //     startLoader()
-  //     await tokenVesting.revoke(token, { from: account })
-  //     getData()
-  //   } catch (e) {
-  //     stopLoader()
-  //   }
-  // }
-
   return (
      <div className="details">
-      <ChannelTitleLink>VESTING DETAILS</ChannelTitleLink>
+      <TitleLink>VESTING DETAILS</TitleLink>
       <table>
         <tbody>
           <TableRow title="Beneficiary">
@@ -125,12 +64,6 @@ const VestingDetails = ({ address, token, details, getData, setLoader }) => {
           <TableRow title="Releasable">
               { formatTokens(releasable) }
           </TableRow>
-          <TableRow title="" >
-            <Button onClick={onRelease}>
-              Release Vested Tokens
-            </Button>
-          </TableRow>
-
           {/* <TableRow title="Revocable">
             <Revocable revocable={ revocable } canRevoke={ canRevoke } onRevoke={ () => onRevoke() } />
           </TableRow> */}
@@ -210,11 +143,12 @@ const Button = styled.button`
   `}
 `
 
-const ChannelTitleLink = styled.h4`
+const TitleLink = styled.h4`
   text-decoration: none;
   font-weight: 600;
   color: #e20880;
   font-size: 20px;
+  text-align: center;
 `
 
 export default VestingDetails

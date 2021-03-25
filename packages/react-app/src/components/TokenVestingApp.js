@@ -6,6 +6,7 @@ import { getTokenVesting, getSimpleToken } from "../contracts";
 import Header from "./Header";
 import VestingDetails from "./VestingDetails";
 import VestingSchedule from "./VestingSchedule";
+import VestingActions from "./VestingActions";
 import Spinner from "./Spinner";
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 import { addresses, abis } from "@project/contracts";
@@ -97,7 +98,7 @@ const TokenVestingApp = () => {
   }, [getVestingLink])
 
   return (
-    <div>
+    <Container>
       {loading ? <Spinner /> : null}
       {
         !isSearchingVesting && vestingAddress == '' ? (
@@ -108,7 +109,7 @@ const TokenVestingApp = () => {
       }
       {details ? (
 
-      <div>
+      <>
         <Header address={vestingAddress} token={addresses.epnsToken} tokenName={"$PUSH"} />
         <Container>
           <VestingDetails
@@ -119,16 +120,18 @@ const TokenVestingApp = () => {
             setLoader={setLoader}
           />
           <VestingSchedule details={details} />
+          <VestingActions address={vestingAddress} token={addresses.epnsToken} setLoader={setLoader} getData={getData} />
         </Container>
-      </div>
+      </>
       ) : null}
-    </div>
+    </Container>
   );
 };
 
 const Container = styled.div`
   // display: flex;
-  padding: 2rem;
+  padding: 0.75rem;
+  width: 100%;
 `;
 
 export default TokenVestingApp;

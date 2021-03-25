@@ -15,7 +15,7 @@ function Home({ setBadgeCount, bellPressed }) {
 
   React.useEffect(() => {
     // Reset when account refreshes
-    userClickedAt(3);
+    userClickedAt(0);
   }, []);
 
   
@@ -28,17 +28,39 @@ function Home({ setBadgeCount, bellPressed }) {
   return (
     <Container>
       <Controls>
-        <ControlButton index={3} active={controlAt == 3 ? 1 : 0} border="#e20880"
+        <ControlButton index={0} active={controlAt == 0 ? 1 : 0} border="#e20880"
           onClick={() => {
-            userClickedAt(3)
+            userClickedAt(0)
           }}
         >
-          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 3 ? 1 : 0} />
-          <ControlText active={controlAt == 3 ? 1 : 0}>Vesting Details</ControlText>
+          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 0 ? 1 : 0} />
+          <ControlText active={controlAt == 0 ? 1 : 0}>Advisors/Team</ControlText>
+        </ControlButton>
+        <ControlButton index={1} active={controlAt == 1 ? 1 : 0} border="#e20880"
+          onClick={() => {
+            userClickedAt(1)
+          }}
+        >
+          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 1 ? 1 : 0} />
+          <ControlText active={controlAt == 1 ? 1 : 0}>Investors</ControlText>
+        </ControlButton>
+        <ControlButton index={2} active={controlAt == 2 ? 1 : 0} border="#e20880"
+          onClick={() => {
+            userClickedAt(2)
+          }}
+        >
+          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 2 ? 1 : 0} />
+          <ControlText active={controlAt == 2 ? 1 : 0}>Admin Controls</ControlText>
         </ControlButton>
       </Controls>
       <Interface>
-        {controlAt == 3 &&
+        {controlAt == 0 &&
+          <TokenVestingApp />
+        }
+        {controlAt == 1 &&
+          <TokenVestingApp />
+        }
+        {controlAt == 2 &&
           <TokenVestingApp />
         }
       </Interface>

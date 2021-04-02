@@ -5,6 +5,8 @@ import styled, { css } from 'styled-components';
 
 import { useWeb3React } from '@web3-react/core'
 import TokenVestingApp from "../components/TokenVestingApp";
+import AdminPanel from "../components/AdminPanel";
+import { addresses, abis } from "@project/contracts";
 
 // Create Header
 function Home({ setBadgeCount, bellPressed }) {
@@ -50,18 +52,29 @@ function Home({ setBadgeCount, bellPressed }) {
           }}
         >
           <ControlImage src="./svg/channeladmin.svg" active={controlAt == 2 ? 1 : 0} />
-          <ControlText active={controlAt == 2 ? 1 : 0}>Admin Controls</ControlText>
+          <ControlText active={controlAt == 2 ? 1 : 0}>Foundation</ControlText>
+        </ControlButton>
+        <ControlButton index={3} active={controlAt == 3 ? 1 : 0} border="#e20880"
+          onClick={() => {
+            userClickedAt(3)
+          }}
+        >
+          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 3 ? 1 : 0} />
+          <ControlText active={controlAt == 3 ? 1 : 0}>Admin Controls</ControlText>
         </ControlButton>
       </Controls>
       <Interface>
         {controlAt == 0 &&
-          <TokenVestingApp />
+          <TokenVestingApp multipleVesting={false} vestingAddresses={null} />
         }
         {controlAt == 1 &&
-          <TokenVestingApp />
+          <TokenVestingApp multipleVesting={true} vestingAddresses={null} />
         }
         {controlAt == 2 &&
-          <TokenVestingApp />
+          <TokenVestingApp multipleVesting={true} vestingAddresses={[addresses.vestedReserves.foundationA, addresses.vestedReserves.foundationB]} />
+        }
+        {controlAt == 3 &&
+          <AdminPanel />
         }
       </Interface>
     </Container>

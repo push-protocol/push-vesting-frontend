@@ -11,7 +11,7 @@ import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 
-const VestingActions = ({ address, token, details, getData, setLoader }) => {
+const VestingActions = ({ multisigContract, address, token, details, getData, setLoader }) => {
   const [ canRevoke, setRevoke ] = React.useState(true);
   const [ recipientAddress, setRecipientAddress ] = React.useState("");
   const [ transferAmount, setTransferAmount ] = React.useState(0);
@@ -28,11 +28,17 @@ const VestingActions = ({ address, token, details, getData, setLoader }) => {
   }
 
   async function onRelease() {
-    const tokenVesting = await getTokenVesting(address, library, account);
+    const tokenVesting = getTokenVesting(address, library, account);
 
     try {
       startLoader()
-      const tx = await tokenVesting.release(token)
+      let tx;
+      if(multisigContract){
+        const data = (await tokenVesting.populateTransaction.release(token)).data
+        tx = await multisigContract.submitTransaction(tokenVesting.address, 0, data);
+      } else {
+        tx = await tokenVesting.release(token)
+      }
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
         position: "bottom-right",
         autoClose: 5000,
@@ -68,10 +74,11 @@ const VestingActions = ({ address, token, details, getData, setLoader }) => {
   }
 
   async function onReleaseBeneficiary() {
-    const tokenVesting = await getTokenVesting(address, library, account);
+    const tokenVesting = getTokenVesting(address, library, account);
 
     try {
       startLoader()
+      let tx;
       if(recipientAddress == "" || transferAmount <= 0 ){
         toast.dark("Invalid Values. Please enter correct address or amount", {
           position: "bottom-right",
@@ -85,7 +92,12 @@ const VestingActions = ({ address, token, details, getData, setLoader }) => {
 
         return
       }
-      const tx = await tokenVesting.releaseToAddress(token, recipientAddress, tokensToBn(transferAmount))
+      if(multisigContract){
+        const data = (await tokenVesting.populateTransaction.releaseToAddress(token, recipientAddress, tokensToBn(transferAmount))).data
+        tx = await multisigContract.submitTransaction(tokenVesting.address, 0, data);
+      } else {
+        tx = await tokenVesting.releaseToAddress(token, recipientAddress, tokensToBn(transferAmount))
+      }
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
         position: "bottom-right",
         autoClose: 5000,
@@ -123,7 +135,7 @@ const VestingActions = ({ address, token, details, getData, setLoader }) => {
   }
 
   async function onChangeBeneficiary() {
-    const tokenVesting = await getTokenVesting(address, library, account);
+    const tokenVesting = getTokenVesting(address, library, account);
 
     try {
       startLoader()
@@ -140,7 +152,13 @@ const VestingActions = ({ address, token, details, getData, setLoader }) => {
 
         return
       }
-      const tx = await tokenVesting.setBeneficiary(newBeneficiary)
+      let tx;
+      if(multisigContract){
+        const data = (await tokenVesting.populateTransaction.setBeneficiary(newBeneficiary)).data
+        tx = await multisigContract.submitTransaction(tokenVesting.address, 0, data);
+      } else {
+        tx = await tokenVesting.setBeneficiary(newBeneficiary)
+      }
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
         position: "bottom-right",
         autoClose: 5000,
@@ -198,8 +216,6 @@ const VestingActions = ({ address, token, details, getData, setLoader }) => {
       </Container>
     </div>
   )
-
-  
 }
 
 const Action = styled.div`
@@ -225,7 +241,7 @@ const Input = styled.input`
   margin: 25px 10px;
   padding: 5px;
   flex: 1;
-`
+`;
 
 const Button = styled.button`
   width: 100px;
@@ -266,7 +282,7 @@ const Button = styled.button`
       pointer: default;
     }
   `}
-`
+`;
 
 const TitleLink = styled.h4`
   text-decoration: none;
@@ -274,6 +290,6 @@ const TitleLink = styled.h4`
   color: #e20880;
   font-size: 20px;
   text-align: center;
-`
+`;
 
 export default VestingActions

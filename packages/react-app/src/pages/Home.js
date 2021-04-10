@@ -1,26 +1,26 @@
-import React from "react";
+import React, { useCallback } from "react";
 import ReactGA from 'react-ga';
 
 import styled, { css } from 'styled-components';
 
 import { useWeb3React } from '@web3-react/core'
 import TokenVestingApp from "../components/TokenVestingApp";
-
+import AdminPanel from "../components/AdminPanel";
+import { addresses, abis } from "@project/contracts";
 
 // Create Header
 function Home({ setBadgeCount, bellPressed }) {
   ReactGA.pageview('/home');
 
   const { active, error, account, library, chainId } = useWeb3React();
-
-  const [controlAt, setControlAt] = React.useState(0);
+  const [controlAt, setControlAt] = React.useState(0);  
 
   React.useEffect(() => {
     // Reset when account refreshes
-    userClickedAt(3);
-
+    userClickedAt(0);
   }, []);
 
+  
   // handle user action at control center
   const userClickedAt = (controlIndex) => {
     setControlAt(controlIndex);
@@ -30,18 +30,51 @@ function Home({ setBadgeCount, bellPressed }) {
   return (
     <Container>
       <Controls>
+        <ControlButton index={0} active={controlAt == 0 ? 1 : 0} border="#e20880"
+          onClick={() => {
+            userClickedAt(0)
+          }}
+        >
+          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 0 ? 1 : 0} />
+          <ControlText active={controlAt == 0 ? 1 : 0}>Advisors/Team</ControlText>
+        </ControlButton>
+        <ControlButton index={1} active={controlAt == 1 ? 1 : 0} border="#e20880"
+          onClick={() => {
+            userClickedAt(1)
+          }}
+        >
+          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 1 ? 1 : 0} />
+          <ControlText active={controlAt == 1 ? 1 : 0}>Investors</ControlText>
+        </ControlButton>
+        <ControlButton index={2} active={controlAt == 2 ? 1 : 0} border="#e20880"
+          onClick={() => {
+            userClickedAt(2)
+          }}
+        >
+          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 2 ? 1 : 0} />
+          <ControlText active={controlAt == 2 ? 1 : 0}>Foundation</ControlText>
+        </ControlButton>
         <ControlButton index={3} active={controlAt == 3 ? 1 : 0} border="#e20880"
           onClick={() => {
             userClickedAt(3)
           }}
         >
           <ControlImage src="./svg/channeladmin.svg" active={controlAt == 3 ? 1 : 0} />
-          <ControlText active={controlAt == 3 ? 1 : 0}>Vesting Details</ControlText>
+          <ControlText active={controlAt == 3 ? 1 : 0}>Admin Controls</ControlText>
         </ControlButton>
       </Controls>
       <Interface>
+        {controlAt == 0 &&
+          <TokenVestingApp multipleVesting={false} vestingAddresses={null} />
+        }
+        {controlAt == 1 &&
+          <TokenVestingApp multipleVesting={true} vestingAddresses={null} />
+        }
+        {controlAt == 2 &&
+          <TokenVestingApp multipleVesting={true} vestingAddresses={[addresses.vestedReserves.foundationA, addresses.vestedReserves.foundationB]} />
+        }
         {controlAt == 3 &&
-          <TokenVestingApp address={"0x0F4408e4ACa6A586bF60199A133554252a336d3c"} token={"0xB5752932244493139638f21A9ad0eb3feA81354c"} />
+          <AdminPanel />
         }
       </Interface>
     </Container>

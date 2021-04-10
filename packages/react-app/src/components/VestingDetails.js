@@ -1,30 +1,20 @@
 import React, { Component } from 'react'
-import { Table } from 'react-bootstrap'
 import moment from 'moment'
 
+import styled, { css } from "styled-components";
 import { getTokenVesting } from '../contracts'
 import { displayAmount } from '../utils'
 
-import { ContractLink } from './Links'
+import { ContractLink, TransactionLink } from './Links'
 import Emoji from './Emoji'
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
+import { toast } from 'react-toastify';
 
 const VestingDetails = ({ address, token, details, getData, setLoader }) => {
-  const [ canRevoke, setRevoke ] = React.useState(true);
   const { active, error, account, library, chainId } = useWeb3React();
   const { start, cliff, end, total, released, vested, revocable, beneficiary } = details
   const releasable = vested ? vested.sub(released) : null
   
-  // React.useEffect(() => {
-  //   const { owner, revoked } = nextProps.details
-
-  //   const isOwner = accounts[0]
-  //     ? owner === accounts[0].toLowerCase()
-  //     : undefined
-
-  //   setState({ accounts, canRevoke: isOwner && ! revoked })
-  // })
-
   function formatDate(date) {
     if (! date) return
     const milliseconds = date * 1000
@@ -38,42 +28,10 @@ const VestingDetails = ({ address, token, details, getData, setLoader }) => {
     return `${display} ${symbol}`
   }
 
-  function startLoader() {
-    setLoader(true)
-  }
-
-  function stopLoader() {
-    setLoader(false)
-  }
-
-  async function onRelease() {
-    const tokenVesting = await getTokenVesting(address, library, account);
-
-    try {
-      startLoader()
-      await tokenVesting.release(token, { from: account })
-      getData()
-    } catch (e) {
-      stopLoader()
-    }
-  }
-
-  async function onRevoke() {
-    const tokenVesting = await getTokenVesting(address, library, account);
-
-    try {
-      startLoader()
-      await tokenVesting.revoke(token, { from: account })
-      getData()
-    } catch (e) {
-      stopLoader()
-    }
-  }
-
   return (
      <div className="details">
-      <h4>Vesting details</h4>
-      <Table striped bordered condensed>
+      <TitleLink>VESTING DETAILS</TitleLink>
+      <table>
         <tbody>
           <TableRow title="Beneficiary">
             <ContractLink address={ beneficiary } />
@@ -106,12 +64,11 @@ const VestingDetails = ({ address, token, details, getData, setLoader }) => {
           <TableRow title="Releasable">
               { formatTokens(releasable) }
           </TableRow>
-
           {/* <TableRow title="Revocable">
             <Revocable revocable={ revocable } canRevoke={ canRevoke } onRevoke={ () => onRevoke() } />
           </TableRow> */}
         </tbody>
-      </Table>
+      </table>
     </div>
   )
 
@@ -146,5 +103,52 @@ const TableRow = ({ title, children }) => {
 //     { releasable > 0 ? <a className="action" onClick={ onRelease }>release</a> : null }
 //   </span>
 // }
+
+
+const Button = styled.button`
+  border: 0;
+  outline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 15px;
+  margin: 10px;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 400;
+  position: relative;
+  background: #e20880;
+  &:hover {
+    opacity: 0.9;
+    cursor: pointer;
+    pointer: hand;
+  }
+  &:active {
+    opacity: 0.75;
+    cursor: pointer;
+    pointer: hand;
+  }
+  ${ props => props.disabled && css`
+    &:hover {
+      opacity: 1;
+      cursor: default;
+      pointer: default;
+    }
+    &:active {
+      opacity: 1;
+      cursor: default;
+      pointer: default;
+    }
+  `}
+`
+
+const TitleLink = styled.h4`
+  text-decoration: none;
+  font-weight: 600;
+  color: #e20880;
+  font-size: 20px;
+  text-align: center;
+`
 
 export default VestingDetails

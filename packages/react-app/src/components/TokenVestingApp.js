@@ -258,7 +258,7 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
                 </>
 
               {
-                vesting1 && vestingAddress.length == 1 ? (
+                vesting1 && vestingAddress.length > 0 ? (
                   <>
                     <Header address={vestingAddress[0]} token={addresses.epnsToken} tokenName={"$PUSH"} />
                     <VestingDetails
@@ -274,7 +274,7 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
                 ): null
               }
               {
-                vesting2 && vestingAddress == 2 ? (
+                vesting2 && vestingAddress > 1 ? (
                   <>
                   <Header address={vestingAddress[1]} token={addresses.epnsToken} tokenName={"$PUSH"} />
                   <VestingDetails

@@ -5,18 +5,19 @@ const addresses = {
   epnscore: "0xb02E99b9634bD21A8e3E36cc7adb673287A8FeaC",
   dai: "0xf80A32A835F79D7787E8a8ee5721D0fEaFd78108",
   aDai: "0xcB1Fe6F440c49E9290c3eb7f158534c2dC374201",
-  epnsToken: "0x310e92E288044e72B787aDeBe622A874f2F54E35",
+  epnsToken: "0xf418588522d5dd018b425E472991E52EBBeEEEEE",
   fundsDistributorFactory: {
-    strategicAllocationFactory: "0x24Ce1Ff20b0eCAae4B10aecC6e24aEbA79ac7ECD",
-    advisorsFactory: "0xFBACcd232FbD4d61834b86f9D64bFCa727130ab9",
-    teamFactory: "0x96Ba97d8a6A0c27fb438a04D701BbaFAbAe831F6",
-    investorsAllocationFactory: "0x9E5e581F37C2914f54fa15674354dF5EE8DD5314",
+    strategicAllocationFactory: "0x4F2a8c211De3752FDFe2bC45737509dA8490eb28",
+    advisorsFactory: "0x809A48D85E68610d01Cd4a9c88E694aeFc858CFE",
+    teamFactory: "0x876DfF9043CFEdA0277031C7242744d6Fd3BC749",
+    investorsAllocationFactory: "0xb10926Ab97774c3d08a7ED4bC7e65eb0AD09bb3d",
   },
   vestedReserves: {
-    commReserves: "0x9975D20513a5738711Dbc09177767f44E196BD19",
-    foundationA: "0xC46840127d4e4Be13Abb8fBd79Fc13A2F201B7a8",
-    foundationB: "0x2E7b9137fC1726091DBc304eb07b6699E9C04e87",
-  }
+    commReserves: "0x6f59b37E9EabeCA527504988C3c7D6D6E77e827A",
+    foundationA: "0xF1A0baa73205E97D9478752562d06F6dD5daEa2f",
+    foundationB: "0x16b41A27dBD3E14F09AB1D57499Bf6738f23812A",
+  },
+  commUnlockedReserves: "0x0cc23a784F9753FA3359dC3aC261a6593cCf214e",
 };
 
 export default addresses;

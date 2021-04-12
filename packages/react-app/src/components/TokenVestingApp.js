@@ -81,20 +81,21 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
   }
 
   const getData = useCallback(async () => {
-    if(vestingAddress){
-      setLoader(true)
+    try {
+      if(vestingAddress){
+        setLoader(true)
         let tokenVesting, tokenContract;
         let start, end, cliff, total, released, vested, decimals, beneficiary, owner, revocable, revoked, name, symbol, duration, balance;
-        if(multipleVesting){
-          let details = [];
-          
-          tokenVesting = getTokenVesting(vestingAddress[0], library, account);
+        let details = [];
+  
+        for(var i = 0; i<vestingAddress.length; i++){
+          tokenVesting = getTokenVesting(vestingAddress[i], library, account);
           tokenContract = getEPNSToken(library, account);
     
           start = await tokenVesting.start();
           duration = await tokenVesting.duration();
           end = start.add(duration);
-          balance = await tokenContract.balanceOf(vestingAddress[0]);
+          balance = await tokenContract.balanceOf(vestingAddress[i]);
           released = await tokenVesting.released(addresses.epnsToken);
           total = balance.add(released);
     
@@ -127,93 +128,27 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
               loading: false,
             }
           )
-
-          tokenVesting = getTokenVesting(vestingAddress[1], library, account);
-          tokenContract = getEPNSToken(library, account);
-    
-          start = await tokenVesting.start();
-          duration = await tokenVesting.duration();
-          end = start.add(duration);
-          balance = await tokenContract.balanceOf(vestingAddress[1]);
-          released = await tokenVesting.released(addresses.epnsToken);
-          total = balance.add(released);
-    
-          cliff = await tokenVesting.cliff();
-          decimals = await tokenContract.decimals();
-          beneficiary = await tokenVesting.beneficiary();
-          owner = await tokenVesting.owner();
-          revocable = await tokenVesting.revocable();
-          revoked = await tokenVesting.revoked(addresses.epnsToken);
-          name = await tokenContract.name();
-    
-          symbol = await tokenContract.symbol();
-          vested = await tokenVesting.vestedAmount(addresses.epnsToken);
-    
-          details.push(
-            {
-              start, 
-              end,
-              cliff,
-              total,
-              released,
-              vested,
-              decimals,
-              beneficiary,
-              owner,
-              revocable,
-              revoked,
-              name,
-              symbol,
-              loading: false,
-            }
-          )
-          
-          // vested = 1
-          setDetails(details);
+  
+        }
+  
+        console.log(details)
+        setDetails(details)
+        setLoader(false);
       } else {
-        tokenVesting = getTokenVesting(vestingAddress[0], library, account);
-        tokenContract = getEPNSToken(library, account);
-  
-        start = await tokenVesting.start();
-        duration = await tokenVesting.duration();
-        end = start.add(duration);
-        balance = await tokenContract.balanceOf(vestingAddress[0]);
-        released = await tokenVesting.released(addresses.epnsToken);
-        total = balance.add(released);
-  
-        cliff = await tokenVesting.cliff();
-        decimals = await tokenContract.decimals();
-        beneficiary = await tokenVesting.beneficiary();
-        owner = await tokenVesting.owner();
-        revocable = await tokenVesting.revocable();
-        revoked = await tokenVesting.revoked(addresses.epnsToken);
-        name = await tokenContract.name();
-  
-        symbol = await tokenContract.symbol();
-        vested = await tokenVesting.vestedAmount(addresses.epnsToken);
-  
-        // const vested = 1
-        setDetails([{
-          start,
-          end,
-          cliff,
-          total,
-          released,
-          vested,
-          decimals,
-          beneficiary,
-          owner,
-          revocable,
-          revoked,
-          name,
-          symbol,
-          loading: false,
-        }]);
+        setLoader(false)
+        setDetails(null)
       }
+    } catch (e) {
+      toast.dark("Something went wrong", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setLoader(false);
-    } else {
-      setLoader(false)
-      setDetails(null)
     }
   }, [vestingAddress]);
 
@@ -323,7 +258,7 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
                 </>
 
               {
-                vesting1 ? (
+                vesting1 && vestingAddress.length > 0 ? (
                   <>
                     <Header address={vestingAddress[0]} token={addresses.epnsToken} tokenName={"$PUSH"} />
                     <VestingDetails
@@ -339,7 +274,7 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
                 ): null
               }
               {
-                vesting2 ? (
+                vesting2 && vestingAddress > 1 ? (
                   <>
                   <Header address={vestingAddress[1]} token={addresses.epnsToken} tokenName={"$PUSH"} />
                   <VestingDetails

@@ -28,9 +28,8 @@ const VestingActions = ({ multisigContract, address, token, details, getData, se
   }
 
   async function onRelease() {
-    const tokenVesting = getTokenVesting(address, library, account);
-
     try {
+      const tokenVesting = getTokenVesting(address, library, account);
       startLoader()
       let tx;
       if(multisigContract){
@@ -74,9 +73,8 @@ const VestingActions = ({ multisigContract, address, token, details, getData, se
   }
 
   async function onReleaseBeneficiary() {
-    const tokenVesting = getTokenVesting(address, library, account);
-
     try {
+      const tokenVesting = getTokenVesting(address, library, account);
       startLoader()
       let tx;
       if(recipientAddress == "" || transferAmount <= 0 ){
@@ -135,9 +133,8 @@ const VestingActions = ({ multisigContract, address, token, details, getData, se
   }
 
   async function onChangeBeneficiary() {
-    const tokenVesting = getTokenVesting(address, library, account);
-
     try {
+      const tokenVesting = getTokenVesting(address, library, account);
       startLoader()
       if(newBeneficiary == ""){
         toast.dark("Invalid Values. Please enter correct address or amount", {

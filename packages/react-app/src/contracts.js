@@ -13,6 +13,12 @@ export function getFundsDistributorFactory(address, library, account) {
   return FundsDistributorFactory;
 }
 
+export function getReserves(library, account) {
+  var signer = library.getSigner(account);
+  let CommUnlockedReserves = new ethers.Contract(addresses.commUnlockedReserves, abis.reserves, signer);
+  return CommUnlockedReserves;
+}
+
 export function getEPNSToken(library, account) {
   var signer = library.getSigner(account);
   let SimpleToken = new ethers.Contract(addresses.epnsToken, abis.epnsToken, signer);

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import moment from 'moment'
 
 import styled, { css } from "styled-components";
-import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory } from '../contracts'
+import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory, getReserves, getEPNSToken } from '../contracts'
 import { displayAmount, tokensToBn } from '../utils'
 import { addresses, abis } from "@project/contracts";
 
@@ -20,6 +20,10 @@ const AdminPanel = () => {
   const [ revokeFundsDistributorFactory, setRevokeFundsDistributorFactory ] = React.useState(addresses.fundsDistributorFactory.advisorsFactory);
   const [ releaseVestingAddress, setReleaseVestingAddress ] = React.useState("");
   const [ revokeVestingAddress, setRevokeVestingAddress ] = React.useState("");
+  const [ recipientAddress, setRecipientAddress ] = React.useState("");
+  const [ transferAmount, setTransferAmount ] = React.useState(0);
+  const [ commUnlockedReservesBalance, setCommUnlockedReservesBalance ] = React.useState(0);
+
   const [ loader, setLoader ] = React.useState(false)
 
   const { active, error, account, library, chainId } = useWeb3React();
@@ -33,9 +37,9 @@ const AdminPanel = () => {
   }
 
   async function onRelease() {
-    const tokenVesting = await getTokenVesting(releaseVestingAddress, library, account);
-    const data = (await tokenVesting.populateTransaction.release(addresses.epnsToken)).data
     try {
+      const tokenVesting = await getTokenVesting(releaseVestingAddress, library, account);
+      const data = (await tokenVesting.populateTransaction.release(addresses.epnsToken)).data
       startLoader()
       
       const tx = await multisigContract.submitTransaction(tokenVesting.address, 0, data);
@@ -74,12 +78,55 @@ const AdminPanel = () => {
   }
 
   async function onRevoke() {
-    const fundsDistributorFactoryInstance = await getFundsDistributorFactory(revokeFundsDistributorFactory, library, account);
-    const data = (await fundsDistributorFactoryInstance.populateTransaction.revokeFundeeTokens(revokeVestingAddress)).data
     try {
+      const fundsDistributorFactoryInstance = await getFundsDistributorFactory(revokeFundsDistributorFactory, library, account);
+      const data = (await fundsDistributorFactoryInstance.populateTransaction.revokeFundeeTokens(revokeVestingAddress)).data
+
       startLoader()
       
       const tx = await multisigContract.submitTransaction(fundsDistributorFactoryInstance.address, 0, data);
+
+      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (e) {
+      toast.dark(e.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      stopLoader()
+    }
+  }
+
+  async function onTransferTokens() {
+    try {
+      const commUnlockedReserves = await getReserves(library, account);
+      const data = (await commUnlockedReserves.populateTransaction.transferTokensToAddress(recipientAddress, tokensToBn(transferAmount))).data
+
+      startLoader()
+      
+      const tx = await multisigContract.submitTransaction(commUnlockedReserves.address, 0, data);
 
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
         position: "bottom-right",
@@ -156,6 +203,29 @@ const AdminPanel = () => {
     }
   }
 
+  React.useEffect(() => {
+    try {
+      const epnsToken = getEPNSToken(library, account);
+
+      const getCommReservesBalance = async () => {
+        const balance = await epnsToken.balanceOf(addresses.commUnlockedReserves);
+        setCommUnlockedReservesBalance(balance);
+      }
+
+      getCommReservesBalance();
+    } catch (error) {
+      toast.dark("Something went wrong fetching Unlocked Community Reserves Balance", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  }, [account])
+
   return (
      <Container>
       <TitleLink>ADMIN PANEL</TitleLink>
@@ -186,6 +256,17 @@ const AdminPanel = () => {
             </Select>
             <Input placeholder="Enter Vesting Contract Address" onChange={(e) => setRevokeVestingAddress(e.target.value)} />
             <Button onClick={onRevoke}>Revoke</Button>
+          </Action>
+        </Card>
+
+        <Card>
+          <CardTitle>Manage Unlocked Reserves</CardTitle>
+          <Label>Amount of Tokens Left - {displayAmount(commUnlockedReservesBalance)}</Label>
+          <Action>
+            <Label>Transfer Tokens to Address</Label>
+            <Input placeholder="Recipient Address" onChange={(e) => setRecipientAddress(e.target.value)} />
+            <Input placeholder="Amount to Transfer" onChange={(e) => setTransferAmount(e.target.value)} />
+            <Button onClick={onTransferTokens}>Submit</Button>
           </Action>
         </Card>
         

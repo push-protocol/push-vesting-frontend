@@ -1,6 +1,6 @@
-import { InjectedConnector } from '@web3-react/injected-connector'
-import { PortisConnector } from '@web3-react/portis-connector'
-import { NetworkConnector } from '@web3-react/network-connector'
+import { InjectedConnector } from "@web3-react/injected-connector";
+import { PortisConnector } from "@web3-react/portis-connector";
+import { NetworkConnector } from "@web3-react/network-connector";
 // import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 // import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 // import { LedgerConnector } from '@web3-react/ledger-connector'
@@ -11,20 +11,20 @@ import { NetworkConnector } from '@web3-react/network-connector'
 // import { SquarelinkConnector } from '@web3-react/squarelink-connector'
 // import { TorusConnector } from '@web3-react/torus-connector'
 
-require('dotenv').config();
+require("dotenv").config();
 
-const POLLING_INTERVAL = 12000
+const POLLING_INTERVAL = 12000;
 const RPC_URLS: { [chainId: number]: string } = {
-  5: "https://goerli.infura.io/v5/084ddf5da9e240c5b5dd9264f37c0526" as string
-}
+  1: "https://mainnet.infura.io/v5/084ddf5da9e240c5b5dd9264f37c0526" as string,
+};
 
-export const injected = new InjectedConnector({ supportedChainIds: [5] })
+export const injected = new InjectedConnector({ supportedChainIds: [1] });
 
 export const network = new NetworkConnector({
-  urls: { 5: RPC_URLS[5] },
-  defaultChainId: 5,
-  pollingInterval: POLLING_INTERVAL
-})
+  urls: { 1: RPC_URLS[1] },
+  defaultChainId: 1,
+  pollingInterval: POLLING_INTERVAL,
+});
 
 // export const walletconnect = new WalletConnectConnector({
 //   rpc: { 1: RPC_URLS[1] },
@@ -54,7 +54,10 @@ export const network = new NetworkConnector({
 //
 // export const fortmatic = new FortmaticConnector({ apiKey: process.env.FORTMATIC_API_KEY as string, chainId: 4 })
 
-export const portis = new PortisConnector({ dAppId: 'cfefa032-9afd-4833-bfb4-2b0cb7ec3413' as string, networks: [1, 100] })
+export const portis = new PortisConnector({
+  dAppId: "cfefa032-9afd-4833-bfb4-2b0cb7ec3413" as string,
+  networks: [1, 100],
+});
 
 // export const squarelink = new SquarelinkConnector({
 //   clientId: process.env.SQUARELINK_CLIENT_ID as string,

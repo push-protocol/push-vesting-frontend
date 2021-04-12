@@ -36,9 +36,10 @@ const AdminCard = ({ name, contract, multisigContract }) => {
   }
 
   async function onDeployVesting() {
-    const bnTransferAmount = tokensToBn(transferAmount);
-    const data = (await contract.populateTransaction.deployFundee(recipientAddress, startEpoch, cliffDuration, duration, revocable, bnTransferAmount, identifier)).data
     try {
+      const bnTransferAmount = tokensToBn(transferAmount);
+      const data = (await contract.populateTransaction.deployFundee(recipientAddress, startEpoch, cliffDuration, duration, revocable, bnTransferAmount, identifier)).data
+      
       startLoader()
       const tx = await multisigContract.submitTransaction(contract.address, 0, data);
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
@@ -114,15 +115,28 @@ const AdminCard = ({ name, contract, multisigContract }) => {
   }
 
   React.useEffect(() => {
-    const epnsToken = getEPNSToken(library, account);
-    setEpnsToken(epnsToken);
+    try {
+      const epnsToken = getEPNSToken(library, account);
+      setEpnsToken(epnsToken);
 
-    const getTokenBalance = async () => {
+      const getTokenBalance = async () => {
         const balance = await epnsToken.balanceOf(contract.address);
         setTokenBalance(balance);
+      }
+
+      getTokenBalance();
+    } catch (error) {
+      toast.dark("Something went wrong fetching balance", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
 
-    getTokenBalance();
   }, [account])
 
   return (

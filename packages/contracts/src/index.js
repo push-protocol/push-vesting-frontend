@@ -5,6 +5,7 @@ import epnsAbi from "./abis/EPNS.json";
 import tokenVestingAbi from "./abis/TokenVesting.json";
 import fundsDistributorFactoryAbi from "./abis/FundsDistributorFactory.json";
 import reservesAbi from "./abis/Reserves.json";
+import vestedReservesAbi from "./abis/VestedReserves.json";
 import multiSigWalletAbi from "./abis/MultiSigWallet.json";
 
 export const abis = {
@@ -15,6 +16,7 @@ export const abis = {
   tokenVesting: tokenVestingAbi,
   fundsDistributorFactory: fundsDistributorFactoryAbi,
   reserves: reservesAbi,
+  vestedReserves: vestedReservesAbi,
   multiSigWallet: multiSigWalletAbi,
 };
 

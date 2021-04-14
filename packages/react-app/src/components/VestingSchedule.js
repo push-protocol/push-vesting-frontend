@@ -26,7 +26,6 @@ const Empty = () => {
       <span className="warning-message">
         <Emoji e="⚠️" /> No funds in the contract
       </span>
-      <VestingChart details={{}} />
     </div>
   );
 };

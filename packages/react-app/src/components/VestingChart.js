@@ -17,7 +17,6 @@ const VestingChart = ({ details }) => {
   }
 
   function getPoints() {
-    console.log(details)
     const { start, cliff, end } = details;
     const now = ethers.BigNumber.from(Math.floor(new Date() / 1000)); // normalize to seconds
     const points = [];

@@ -15,14 +15,14 @@ require("dotenv").config();
 
 const POLLING_INTERVAL = 12000;
 const RPC_URLS: { [chainId: number]: string } = {
-  5: "https://goerli.infura.io/v5/084ddf5da9e240c5b5dd9264f37c0526" as string,
+  1: "https://mainnet.infura.io/v5/084ddf5da9e240c5b5dd9264f37c0526" as string,
 };
 
-export const injected = new InjectedConnector({ supportedChainIds: [5] });
+export const injected = new InjectedConnector({ supportedChainIds: [1] });
 
 export const network = new NetworkConnector({
-  urls: { 5: RPC_URLS[5] },
-  defaultChainId: 5,
+  urls: { 1: RPC_URLS[1] },
+  defaultChainId: 1,
   pollingInterval: POLLING_INTERVAL,
 });
 

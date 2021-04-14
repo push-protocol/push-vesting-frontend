@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import moment from 'moment'
 
 import styled, { css } from "styled-components";
-import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory, getReserves, getEPNSToken } from '../contracts'
+import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory, getReserves, getEPNSToken, getVestedReserves } from '../contracts'
 import { displayAmount, tokensToBn } from '../utils'
 import { addresses, abis } from "@project/contracts";
 
@@ -12,6 +12,7 @@ import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 import AdminCard from "./AdminCard";
+import VestedReservesCard from "./VestedReservesCard";
 
 const AdminPanel = () => {
   const [ canRevoke, setRevoke ] = React.useState(true);
@@ -258,6 +259,8 @@ const AdminPanel = () => {
             <Button onClick={onRevoke}>Revoke</Button>
           </Action>
         </Card>
+
+        <VestedReservesCard name={"Community Reserves"} contract={getVestedReserves(addresses.vestedReserves.commReserves, library, account)} multisigContract={multisigContract} />
 
         <Card>
           <CardTitle>Manage Unlocked Reserves</CardTitle>

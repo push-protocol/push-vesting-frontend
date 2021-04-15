@@ -13,7 +13,7 @@ const addresses = {
     investorsAllocationFactory: "0xb10926Ab97774c3d08a7ED4bC7e65eb0AD09bb3d",
   },
   vestedReserves: {
-    commReserves: "0x6f59b37E9EabeCA527504988C3c7D6D6E77e827A",
+    commReserves: "0x68a9832153fd7f95f1a3fa24fccc3d63a6486e66",  // deprecated = 0x6f59b37e9eabeca527504988c3c7d6d6e77e827a
     foundationA: "0xF1A0baa73205E97D9478752562d06F6dD5daEa2f",
     foundationB: "0x16b41A27dBD3E14F09AB1D57499Bf6738f23812A",
   },

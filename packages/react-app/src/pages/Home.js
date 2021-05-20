@@ -13,17 +13,30 @@ function Home({ setBadgeCount, bellPressed }) {
   ReactGA.pageview('/home');
 
   const { active, error, account, library, chainId } = useWeb3React();
-  const [controlAt, setControlAt] = React.useState(0);  
+
+  const [controlAt, setControlAt] = React.useState(0);
 
   React.useEffect(() => {
     // Reset when account refreshes
     userClickedAt(0);
   }, []);
 
-  
+
   // handle user action at control center
   const userClickedAt = (controlIndex) => {
     setControlAt(controlIndex);
+  }
+
+  const isAccountAdmin = () => {
+    if (account == "0xFbA7Df351ADD4E79099f63E33b2679EDFDD5e2aB" ||
+        account == "0x0ec9990fFdA6484B6047ed874f173fbD37f939F7" ||
+        account == "0x2E06acc49D2B0724a3681B6b0C264a74786C98d5" ||
+        account == "0x742D46D44E627375F7439CFC9042bB48A47A8C0A" ||
+        account == "0x3054C63304548F8477A734DA36077bE6a983DCaD") {
+      return true;
+    }
+
+    return false;
   }
 
   // Render
@@ -46,22 +59,27 @@ function Home({ setBadgeCount, bellPressed }) {
           <ControlImage src="./svg/channeladmin.svg" active={controlAt == 1 ? 1 : 0} />
           <ControlText active={controlAt == 1 ? 1 : 0}>Investors</ControlText>
         </ControlButton>
-        <ControlButton index={2} active={controlAt == 2 ? 1 : 0} border="#e20880"
-          onClick={() => {
-            userClickedAt(2)
-          }}
-        >
-          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 2 ? 1 : 0} />
-          <ControlText active={controlAt == 2 ? 1 : 0}>Foundation</ControlText>
-        </ControlButton>
-        <ControlButton index={3} active={controlAt == 3 ? 1 : 0} border="#e20880"
-          onClick={() => {
-            userClickedAt(3)
-          }}
-        >
-          <ControlImage src="./svg/channeladmin.svg" active={controlAt == 3 ? 1 : 0} />
-          <ControlText active={controlAt == 3 ? 1 : 0}>Admin Controls</ControlText>
-        </ControlButton>
+
+        {isAccountAdmin() &&
+          <>
+            <ControlButton index={2} active={controlAt == 2 ? 1 : 0} border="#e20880"
+              onClick={() => {
+                userClickedAt(2)
+              }}
+            >
+              <ControlImage src="./svg/channeladmin.svg" active={controlAt == 2 ? 1 : 0} />
+              <ControlText active={controlAt == 2 ? 1 : 0}>Foundation</ControlText>
+            </ControlButton>
+            <ControlButton index={3} active={controlAt == 3 ? 1 : 0} border="#e20880"
+              onClick={() => {
+                userClickedAt(3)
+              }}
+            >
+              <ControlImage src="./svg/channeladmin.svg" active={controlAt == 3 ? 1 : 0} />
+              <ControlText active={controlAt == 3 ? 1 : 0}>Admin Controls</ControlText>
+            </ControlButton>
+          </>
+        }
       </Controls>
       <Interface>
         {controlAt == 0 &&
@@ -70,10 +88,10 @@ function Home({ setBadgeCount, bellPressed }) {
         {controlAt == 1 &&
           <TokenVestingApp multipleVesting={true} vestingAddresses={null} />
         }
-        {controlAt == 2 &&
+        {controlAt == 2 && isAccountAdmin() &&
           <TokenVestingApp multipleVesting={true} vestingAddresses={[addresses.vestedReserves.foundationA, addresses.vestedReserves.foundationB]} />
         }
-        {controlAt == 3 &&
+        {controlAt == 3 && isAccountAdmin() &&
           <AdminPanel />
         }
       </Interface>

@@ -18,6 +18,7 @@ const addresses = {
     foundationB: "0x16b41A27dBD3E14F09AB1D57499Bf6738f23812A",
   },
   commUnlockedReserves: "0x0cc23a784F9753FA3359dC3aC261a6593cCf214e",
+  epnsMultisig: "0x4957091F11Ca0A298a6656607Cc3B973cebb1F5c"
 };
 
 export default addresses;

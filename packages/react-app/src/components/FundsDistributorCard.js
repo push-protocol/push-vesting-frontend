@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import moment from 'moment'
 
 import styled, { css } from "styled-components";
-import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory, getEPNSToken } from '../contracts'
+import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory, get } from '../contracts'
 import { displayAmount, tokensToBn } from '../utils'
 
 import { ContractLink, TransactionLink } from './Links'
@@ -10,123 +10,97 @@ import Emoji from './Emoji'
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
+import { addresses, abis, bytecodes } from "@project/contracts";
+import Loader from "react-loader-spinner";
 
-const AdminCard = ({ name, contract, multisigContract }) => {
+const FundsDistributorCard = ({ name, contract }) => {
   const [ canRevoke, setRevoke ] = React.useState(true);
   const [ recipientAddress, setRecipientAddress ] = React.useState("");
   const [ startEpoch, setStartEpoch ] = React.useState(0);
   const [ cliffDuration, setCliffDuration ] = React.useState(0);
   const [ duration, setDuration ] = React.useState(0);
   const [ revocable, setRevocable ] = React.useState(0);
-  const [ transferAmount, setTransferAmount ] = React.useState(0);
-  const [ withdrawAmount, setWithdrawAmount ] = React.useState(0);
   const [ identifier, setIdentifier ] = React.useState(0);
+  const [ deployedAddress, setDeployedAddress ] = React.useState(null)
   const [ loader, setLoader ] = React.useState(false);
-  const [ epnsToken, setEpnsToken ] = React.useState(null);
-  const [ tokenBalance, setTokenBalance ] = React.useState(ethers.BigNumber.from(0));
 
   const { active, error, account, library, chainId } = useWeb3React();
-  
-  function startLoader() {
-    setLoader(true)
-  }
-
-  function stopLoader() {
-    setLoader(false)
-  }
 
   async function onDeployVesting() {
+    let deployedVestingAddress = "";
     try {
-      const bnTransferAmount = tokensToBn(transferAmount);
-      const data = (await contract.populateTransaction.deployFundee(recipientAddress, startEpoch, cliffDuration, duration, revocable, bnTransferAmount, identifier)).data
+      let txToast = toast.dark(<LoaderToast msg="Waiting for Confirmation..." color="#35c5f3" />, {
+        position: "bottom-right",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      const tx = await contract.deploy(recipientAddress, startEpoch, cliffDuration, duration, revocable, identifier)
+      console.log(tx);
+
+      txToast = toast.dark(<LoaderToast msg="Transaction Sent, Waiting for mining..." color="#35c5f3" />, {
+        position: "bottom-right",
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      console.log(tx, "tx")
+      deployedVestingAddress = tx.deployTransaction.creates
+      setDeployedAddress(deployedVestingAddress);
+      await tx.deployTransaction.wait()
+
+      toast.update(txToast, {
+        render: "Transaction Successful, Vesting Deployed",
+        type: toast.TYPE.SUCCESS,
+        autoClose: 5000,
+      });
       
-      startLoader()
-      const tx = await multisigContract.submitTransaction(contract.address, 0, data);
-      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      const receipt = await tx.wait()
-      toast.dark("Transaction Successful", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    } catch (e) {
-      toast.dark(e.message, {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      stopLoader()
-    }
-  }
+      try {
+        let txToast = toast.dark(<LoaderToast msg="Transferring Ownership, Waiting for Confirmation..." color="#35c5f3" />, {
+          position: "bottom-right",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
 
-  async function onWithdrawTokens() {
-    const bnWithdrawAmount = tokensToBn(withdrawAmount);
-    const data = (await contract.populateTransaction.withdrawTokens(bnWithdrawAmount)).data
-    try {
-      startLoader()
-      const tx = await multisigContract.submitTransaction(contract.address, 0, data);
-      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      const receipt = await tx.wait()
-      toast.dark("Transaction Successful", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    } catch (e) {
-      toast.dark(e.message, {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      stopLoader()
-    }
-  }
+        const fundsDistributorInstance = await getTokenVesting(deployedVestingAddress, library, account);
+        const tx = await fundsDistributorInstance.transferOwnership(addresses.epnsMultisig);
 
-  React.useEffect(() => {
-    try {
-      const epnsToken = getEPNSToken(library, account);
-      setEpnsToken(epnsToken);
+        txToast = toast.dark(<LoaderToast msg="Transaction Sent, Waiting for mining..." color="#35c5f3" />, {
+          position: "bottom-right",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        
+        await tx.wait();
 
-      const getTokenBalance = async () => {
-        const balance = await epnsToken.balanceOf(contract.address);
-        setTokenBalance(balance);
+        toast.update(txToast, {
+          render: "Transaction Successful, Ownership transferred",
+          type: toast.TYPE.SUCCESS,
+          autoClose: 5000,
+        });
+      } catch (e) {
+        toast.update(txToast, {
+          render: e.message,
+          type: toast.TYPE.ERROR,
+          autoClose: 5000,
+        });
       }
-
-      getTokenBalance();
-    } catch (error) {
-      toast.dark("Something went wrong fetching balance", {
+    } catch (e) {
+      toast.dark(e.message, {
         position: "bottom-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -136,14 +110,12 @@ const AdminCard = ({ name, contract, multisigContract }) => {
         progress: undefined,
       });
     }
-
-  }, [account])
+  }
 
   return (
      <>
         <Card>
           <CardTitle>{name}</CardTitle>
-            <Label>Amount of Tokens Left - {displayAmount(tokenBalance)}</Label>
           <Action>
             <Label>Deploy New Instance</Label>
             <Input placeholder="Enter Beneficiary Address" onChange={(e) => setRecipientAddress(e.target.value)} />
@@ -154,25 +126,39 @@ const AdminCard = ({ name, contract, multisigContract }) => {
 
             <Input type="radio" id="true" onChange={(e) => setRevocable(true)} />
             <label for="true">True</label>
-            <Input type="radio" id="true" onChange={(e) => setRevocable(false)} />
-            <label for="true">False</label>
+            <Input type="radio" id="false" onChange={(e) => setRevocable(false)} />
+            <label for="false">False</label>
 
-            <Input placeholder="Enter Token Amount" onChange={(e) => setTransferAmount(e.target.value)} />
             <Input placeholder="Enter Identifier" onChange={(e) => setIdentifier(e.target.value)} />
             <Button onClick={onDeployVesting}>Submit</Button>
           </Action>
-
-          <Action style={{ display: 'flex' }}>
-            <Label>Withdraw Tokens</Label>
-            <Input placeholder="Enter Token Amount" onChange={(e) => setWithdrawAmount(e.target.value)} />
-            <Button onClick={onWithdrawTokens}>Withdraw</Button>
-          </Action>
+          {
+            deployedAddress ? (<Label>New Funds Distributor Deployed to - {deployedAddress}</Label>): null
+          } 
         </Card>
     </>
-  )
-
-  
+  ) 
 }
+
+const Toaster = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0px 10px;
+`;
+
+const ToasterMsg = styled.div`
+  margin: 0px 10px;
+`;
+
+
+// toast customize
+const LoaderToast = ({ msg, color }) => (
+  <Toaster>
+    <Loader type="Oval" color={color} height={30} width={30} />
+    <ToasterMsg>{msg}</ToasterMsg>
+  </Toaster>
+);
 
 const CardTitle = styled.span`
   color: #e20880;
@@ -267,4 +253,4 @@ const TitleLink = styled.h4`
   text-align: center;
 `
 
-export default AdminCard
+export default FundsDistributorCard

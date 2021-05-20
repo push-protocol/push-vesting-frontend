@@ -3,6 +3,7 @@ import ownableAbi from "./abis/ownable";
 import epnscoreAbi from "./abis/epnscore";
 import epnsAbi from "./abis/EPNS.json";
 import tokenVestingAbi from "./abis/TokenVesting.json";
+import fundsDistributorAbi from "./abis/FundsDistributor.json";
 import fundsDistributorFactoryAbi from "./abis/FundsDistributorFactory.json";
 import reservesAbi from "./abis/Reserves.json";
 import vestedReservesAbi from "./abis/VestedReserves.json";
@@ -14,6 +15,7 @@ export const abis = {
   epnscore: epnscoreAbi,
   epnsToken: epnsAbi,
   tokenVesting: tokenVestingAbi,
+  fundsDistributor: fundsDistributorAbi,
   fundsDistributorFactory: fundsDistributorFactoryAbi,
   reserves: reservesAbi,
   vestedReserves: vestedReservesAbi,
@@ -21,3 +23,4 @@ export const abis = {
 };
 
 export { default as addresses } from "./addresses";
+export { default as bytecodes } from "./bytecodes";

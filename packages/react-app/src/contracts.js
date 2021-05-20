@@ -1,5 +1,11 @@
-import { addresses, abis } from "@project/contracts";
+import { addresses, abis, bytecodes } from "@project/contracts";
 const ethers = require('ethers');
+
+export function getFundsDistributor(library, account) {
+  var signer = library.getSigner(account);
+  let FundsDistributor = new ethers.ContractFactory(abis.fundsDistributor, bytecodes.fundsDistributor, signer);
+  return FundsDistributor;
+}
 
 export function getTokenVesting(address, library, account) {
   var signer = library.getSigner(account);

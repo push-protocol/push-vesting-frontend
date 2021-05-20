@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import moment from 'moment'
 
 import styled, { css } from "styled-components";
-import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory, getReserves, getEPNSToken, getVestedReserves } from '../contracts'
+import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory, getFundsDistributor, getReserves, getEPNSToken, getVestedReserves } from '../contracts'
 import { displayAmount, tokensToBn } from '../utils'
 import { addresses, abis } from "@project/contracts";
 
@@ -11,7 +11,8 @@ import Emoji from './Emoji'
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
-import AdminCard from "./AdminCard";
+import FundsDistributorCard from "./FundsDistributorCard";
+import FundsDistributorFactoryCard from "./FundsDistributorFactoryCard";
 import VestedReservesCard from "./VestedReservesCard";
 
 const AdminPanel = () => {
@@ -272,11 +273,13 @@ const AdminPanel = () => {
             <Button onClick={onTransferTokens}>Submit</Button>
           </Action>
         </Card>
+
+        <FundsDistributorCard name={"Deploy Funds Distributor"} contract={getFundsDistributor(library, account)} />
         
-        <AdminCard name={"Advisors"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.advisorsFactory, library, account)} multisigContract={multisigContract} />
-        <AdminCard name={"Team"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.teamFactory, library, account)} multisigContract={multisigContract} />
-        <AdminCard name={"Investors"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.investorsAllocationFactory, library, account)} multisigContract={multisigContract} />
-        <AdminCard name={"Strategic"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.strategicAllocationFactory, library, account)} multisigContract={multisigContract} />
+        <FundsDistributorFactoryCard name={"Advisors"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.advisorsFactory, library, account)} multisigContract={multisigContract} />
+        <FundsDistributorFactoryCard name={"Team"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.teamFactory, library, account)} multisigContract={multisigContract} />
+        <FundsDistributorFactoryCard name={"Investors"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.investorsAllocationFactory, library, account)} multisigContract={multisigContract} />
+        <FundsDistributorFactoryCard name={"Strategic"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.strategicAllocationFactory, library, account)} multisigContract={multisigContract} />
     </Container>
   )
 }

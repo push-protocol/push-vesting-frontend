@@ -9,6 +9,12 @@ import reservesAbi from "./abis/Reserves.json";
 import vestedReservesAbi from "./abis/VestedReserves.json";
 import multiSigWalletAbi from "./abis/MultiSigWallet.json";
 
+import daiAbi from "./abis/dai";
+import stakingAbi from "./abis/Staking.json";
+import yieldFarmingAbi from "./abis/YieldFarm.json";
+import UniswapV2Router02Abi from "./abis/UniswapV2Router02.json";
+
+
 export const abis = {
   erc20: erc20Abi,
   ownable: ownableAbi,
@@ -20,6 +26,10 @@ export const abis = {
   reserves: reservesAbi,
   vestedReserves: vestedReservesAbi,
   multiSigWallet: multiSigWalletAbi,
+  dai: daiAbi,
+  staking: stakingAbi,
+  yieldFarming: yieldFarmingAbi,
+  uniswapV2Router02: UniswapV2Router02Abi,
 };
 
 export { default as addresses } from "./addresses";

@@ -16,7 +16,7 @@ import { addresses, abis } from "@project/contracts";
 import { queryVestingLink, queryVestingLinkMultiple } from "../utils";
 import { toast } from 'react-toastify';
 
-const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
+const TokenVestingApp = ({ multipleVesting, vestingAddresses, loaderTheme, loadAPR, actionable }) => {
   const [ details, setDetails ] = useState(null);
   const [ isSearchingVesting, setIsSearchingVesting ] = React.useState(true)
   const [ loading, setLoader ] = useState(true);
@@ -134,7 +134,6 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
 
         }
 
-        console.log(details)
         setDetails(details)
         setLoader(false);
       } else {
@@ -210,12 +209,12 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
       <Content>
         <Item>
           {loading ?
-            <Loader type="Oval" color="#e20880" height={40} width={40} /> :
+            <Loader type="Oval" color={loaderTheme ? loaderTheme : "#e20880"} height={40} width={40} /> :
             null
           }
           {
             !isSearchingVesting && vestingAddress == null ? (
-              <Item self="stretch" align="stretch" padding="10px 25px">
+              <Item self="stretch" align="stretch" padding="10px 40px">
                 <center>
                   <h4>No Vesting Contract found for this address</h4>
                   <h2>OR</h2>
@@ -236,69 +235,39 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
               </Item>
             ) : null
           }
-          {details ? (
-          <>
-            <Item self="stretch" align="stretch" padding="10px 25px">
-              <Action>
-                <Label>Set Multisig Address (If POA)</Label>
-                <Input placeholder="Enter Multisig Address" onChange={(e) => setMultisigAddress(e.target.value)} />
-                <Button onClick={setMultisigInstance}>Set Address</Button>
-              </Action>
-              {
-                multisigContract ? (
-                  <><center><CardTitle>Multisig Address Set - </CardTitle><span>{multisigContract.address}</span></center></>
-                  ): null
-                }
-              {
-                multipleVesting ? (
-                  <>
-                    <ItemH self="flex-start">
-                      <Input type="radio" id="vesting1" checked={vesting1} onChange={() => {
-                        setVesting1(true)
-                        setVesting2(false)
-                      }} />
-                      <label for="vesting1">Vesting 1</label>
-                      <Input type="radio" id="vesting2" checked={vesting2} onChange={() => {
-                        setVesting1(false)
-                        setVesting2(true)
-                      }}  />
-                      <label for="vesting2">Vesting 2</label>
-                    </ItemH>
+          {details &&
+            <Item self="stretch" align="stretch" padding="10px 0px">
+              <Item self="stretch" align="stretch" padding="10px 25px">
+                <Action>
+                  <Label>Set Multisig Address (If POA)</Label>
+                  <Input placeholder="Enter Multisig Address" onChange={(e) => setMultisigAddress(e.target.value)} />
+                  <Button onClick={setMultisigInstance}>Set Address</Button>
+                </Action>
 
-                  {
-                    vesting1 && vestingAddress.length > 0 ? (
-                      <>
-                        <Header address={vestingAddress[0]} token={addresses.epnsToken} tokenName={"$PUSH"} />
-                        <VestingDetails
-                          address={vestingAddress[0]}
-                          token={addresses.epnsToken}
-                          details={details[0]}
-                          getData={getData}
-                          setLoader={setLoader}
-                        />
-                        <VestingSchedule details={details[0]} />
-                        <VestingActions multisigContract={multisigContract} address={vestingAddress[0]} token={addresses.epnsToken} setLoader={setLoader} getData={getData} />
-                      </>
-                    ): null
-                  }
-                  {
-                    vesting2 && vestingAddress.length > 1 ? (
-                    <>
-                      <Header address={vestingAddress[1]} token={addresses.epnsToken} tokenName={"$PUSH"} />
-                      <VestingDetails
-                        address={vestingAddress[1]}
-                        token={addresses.epnsToken}
-                        details={details[1]}
-                        getData={getData}
-                        setLoader={setLoader}
-                      />
-                      <VestingSchedule details={details[1]} />
-                      <VestingActions multisigContract={multisigContract} address={vestingAddress[1]} token={addresses.epnsToken} setLoader={setLoader} getData={getData} />
-                    </>
-                    ): null
-                  }
+                {multisigContract &&
+                  <>
+                    <center><CardTitle>Multisig Address Set - </CardTitle><span>{multisigContract.address}</span></center>
                   </>
-                ): (
+                }
+              </Item>
+
+              <Item self="stretch" align="stretch" padding="10px 25px">
+                {multipleVesting &&
+                  <ItemH self="flex-start">
+                    <Input type="radio" id="vesting1" checked={vesting1} onChange={() => {
+                      setVesting1(true)
+                      setVesting2(false)
+                    }} />
+                    <label for="vesting1">Vesting 1</label>
+                    <Input type="radio" id="vesting2" checked={vesting2} onChange={() => {
+                      setVesting1(false)
+                      setVesting2(true)
+                    }}  />
+                    <label for="vesting2">Vesting 2</label>
+                  </ItemH>
+                }
+
+                {multipleVesting && vesting1 && vestingAddress.length > 0 &&
                   <>
                     <Header address={vestingAddress[0]} token={addresses.epnsToken} tokenName={"$PUSH"} />
                     <VestingDetails
@@ -309,13 +278,58 @@ const TokenVestingApp = ({ multipleVesting, vestingAddresses }) => {
                       setLoader={setLoader}
                     />
                     <VestingSchedule details={details[0]} />
-                    <VestingActions multisigContract={multisigContract} address={vestingAddress[0]} token={addresses.epnsToken} setLoader={setLoader} getData={getData} />
                   </>
-                )
-              }
+                }
+
+                {multipleVesting && vesting2 && vestingAddress.length > 0 &&
+                  <>
+                    <Header address={vestingAddress[1]} token={addresses.epnsToken} tokenName={"$PUSH"} />
+                    <VestingDetails
+                      address={vestingAddress[1]}
+                      token={addresses.epnsToken}
+                      details={details[1]}
+                      getData={getData}
+                      setLoader={setLoader}
+                    />
+                    <VestingSchedule details={details[1]} />
+                  </>
+                }
+
+                {!multipleVesting &&
+                  <>
+                    <Header address={vestingAddress[0]} token={addresses.epnsToken} tokenName={"$PUSH"} />
+                    <VestingDetails
+                      address={vestingAddress[0]}
+                      token={addresses.epnsToken}
+                      details={details[0]}
+                      getData={getData}
+                      setLoader={setLoader}
+                    />
+                    <VestingSchedule details={details[0]} />
+                  </>
+                }
+              </Item>
+
+              <Item self="stretch" align="stretch" padding="10px 0px">
+                {multipleVesting &&
+                  <>
+                  {vesting1 && vestingAddress.length > 0 &&
+                    <VestingActions multisigContract={multisigContract} address={vestingAddress[0]} token={addresses.epnsToken} setLoader={setLoader} getData={getData} loaderTheme={loaderTheme} loadAPR={loadAPR} actionable={actionable} />
+                  }
+
+                  {vesting2 && vestingAddress.length > 0 &&
+                    <VestingActions multisigContract={multisigContract} address={vestingAddress[1]} token={addresses.epnsToken} setLoader={setLoader} getData={getData} loaderTheme={loaderTheme} loadAPR={loadAPR} actionable={actionable} />
+                  }
+                  </>
+                }
+
+                {!multipleVesting &&
+                  <VestingActions loadAPR={loadAPR} multisigContract={multisigContract} address={vestingAddress[0]} token={addresses.epnsToken} setLoader={setLoader} getData={getData} loaderTheme={loaderTheme} loadAPR={loadAPR} actionable={actionable} />
+                }
+              </Item>
+
             </Item>
-          </>
-          ) : null}
+          }
         </Item>
       </Content>
     </Section>

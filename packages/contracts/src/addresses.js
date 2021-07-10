@@ -18,7 +18,23 @@ const addresses = {
     foundationB: "0x16b41A27dBD3E14F09AB1D57499Bf6738f23812A",
   },
   commUnlockedReserves: "0x0cc23a784F9753FA3359dC3aC261a6593cCf214e",
-  epnsMultisig: "0x4957091F11Ca0A298a6656607Cc3B973cebb1F5c"
+  epnsMultisig: "0x4957091F11Ca0A298a6656607Cc3B973cebb1F5c",
+
+  staking: "0xB72ff1e675117beDefF05a7D0a472c3844cfec85",
+  yieldFarmPUSH: "0x6019B84E2eE9EB62BC42E32AB6375A7095886366",
+  yieldFarmLP: "0xbB2A70e67770D0A7F5f42d883C5BBE9b85e0DcD6",
+  epnsToken: "0xf418588522d5dd018b425E472991E52EBBeEEEEE",
+  epnsLPToken: "0xaf31fd9c3b0350424bf96e551d2d1264d8466205",
+
+  uniswapV2Router02: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+
+  // WETHAddress: "0xc778417e063141139fce010982780140aa0cd5ab", // ropsten address
+  // USDTAddress: "0xad6d458402f60fd3bd25163575031acdce07538d", // ropsten address
+
+  WETHAddress: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", // mainnet address
+  USDTAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7", // mainnet address
+
+  distributor: "0x64CfAb2eA55ADAe08c9040fdA247828444fB9D0D", //mainnet address
 };
 
 export default addresses;

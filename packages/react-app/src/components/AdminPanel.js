@@ -26,10 +26,14 @@ const AdminPanel = () => {
   const [ transferAmount, setTransferAmount ] = React.useState(0);
   const [ commUnlockedReservesBalance, setCommUnlockedReservesBalance ] = React.useState(0);
 
+  const [ confirmMultisigTxID, setConfirmMultisigTxID ] = React.useState("");
+  const [ executeMultisigTxID, setExecuteMultisigTxID ] = React.useState("");
+  const [ revokeMultisigTxID, setRevokeMultisigTxID ] = React.useState("");
+
   const [ loader, setLoader ] = React.useState(false)
 
   const { active, error, account, library, chainId } = useWeb3React();
-  
+
   function startLoader() {
     setLoader(true)
   }
@@ -43,8 +47,128 @@ const AdminPanel = () => {
       const tokenVesting = await getTokenVesting(releaseVestingAddress, library, account);
       const data = (await tokenVesting.populateTransaction.release(addresses.epnsToken)).data
       startLoader()
-      
+
       const tx = await multisigContract.submitTransaction(tokenVesting.address, 0, data);
+
+      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (e) {
+      toast.dark(e.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      stopLoader()
+    }
+  }
+
+  async function onMultisigConfirm() {
+    try {
+      const multisigContractInstance = await getMultisigWallet(addresses.epnsMultisig, library, account);
+      startLoader()
+
+      const tx = await multisigContractInstance.confirmTransaction(confirmMultisigTxID);
+
+      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (e) {
+      toast.dark(e.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      stopLoader()
+    }
+  }
+
+  async function onMultisigExecute() {
+    try {
+      const multisigContractInstance = await getMultisigWallet(addresses.epnsMultisig, library, account);
+      startLoader()
+
+      const tx = await multisigContractInstance.executeTransaction(executeMultisigTxID);
+
+      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (e) {
+      toast.dark(e.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      stopLoader()
+    }
+  }
+
+  async function onMultisigRevoke() {
+    try {
+      const multisigContractInstance = await getMultisigWallet(addresses.epnsMultisig, library, account);
+      startLoader()
+
+      const tx = await multisigContractInstance.revokeTransaction(revokeMultisigTxID);
 
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
         position: "bottom-right",
@@ -85,7 +209,7 @@ const AdminPanel = () => {
       const data = (await fundsDistributorFactoryInstance.populateTransaction.revokeFundeeTokens(revokeVestingAddress)).data
 
       startLoader()
-      
+
       const tx = await multisigContract.submitTransaction(fundsDistributorFactoryInstance.address, 0, data);
 
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
@@ -127,7 +251,7 @@ const AdminPanel = () => {
       const data = (await commUnlockedReserves.populateTransaction.transferTokensToAddress(recipientAddress, tokensToBn(transferAmount))).data
 
       startLoader()
-      
+
       const tx = await multisigContract.submitTransaction(commUnlockedReserves.address, 0, data);
 
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
@@ -241,6 +365,26 @@ const AdminPanel = () => {
               <><center><CardTitle>Multisig Address Set - </CardTitle><span>{multisigContract.address}</span></center></>
             ): null
           }
+
+        <Card>
+          <CardTitle>Manage Multisig Signing</CardTitle>
+          <Action>
+            <Label>Confirm & Execute Transaction</Label>
+            <Input placeholder="Multisig Id to Confirm" onChange={(e) => setConfirmMultisigTxID(e.target.value)} />
+            <Button onClick={onMultisigConfirm}>Confirm</Button>
+          </Action>
+          <Action>
+            <Label>Execute Transaction</Label>
+            <Input placeholder="Multisig Id to Execute" onChange={(e) => setExecuteMultisigTxID(e.target.value)} />
+            <Button onClick={onMultisigExecute}>Confirm</Button>
+          </Action>
+          <Action>
+            <Label>Revoke Transaction</Label>
+            <Input placeholder="Multisig Id to Revoke" onChange={(e) => setRevokeMultisigTxID(e.target.value)} />
+            <Button onClick={onMultisigRevoke}>Revoke</Button>
+          </Action>
+        </Card>
+
         <Card>
           <CardTitle>Manage Vesting</CardTitle>
           <Action>
@@ -275,7 +419,7 @@ const AdminPanel = () => {
         </Card>
 
         <FundsDistributorCard name={"Deploy Funds Distributor"} contract={getFundsDistributor(library, account)} />
-        
+
         <FundsDistributorFactoryCard name={"Advisors"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.advisorsFactory, library, account)} multisigContract={multisigContract} />
         <FundsDistributorFactoryCard name={"Team"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.teamFactory, library, account)} multisigContract={multisigContract} />
         <FundsDistributorFactoryCard name={"Investors"} contract={getFundsDistributorFactory(addresses.fundsDistributorFactory.investorsAllocationFactory, library, account)} multisigContract={multisigContract} />

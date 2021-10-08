@@ -168,7 +168,7 @@ const AdminPanel = () => {
       const multisigContractInstance = await getMultisigWallet(addresses.epnsMultisig, library, account);
       startLoader()
 
-      const tx = await multisigContractInstance.revokeTransaction(revokeMultisigTxID);
+      const tx = await multisigContractInstance.revokeConfirmation(revokeMultisigTxID);
 
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
         position: "bottom-right",

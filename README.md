@@ -1,4 +1,4 @@
-# epns-vesting-frontend
+# PUSH-vesting-frontend
 The Vesting Details UI
 
 ### Additional Info

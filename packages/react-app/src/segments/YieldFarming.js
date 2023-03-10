@@ -224,19 +224,20 @@ function YieldFarming() {
         bg="#CF1C84"
         color="#fff"
         textAlign="left"
+        size="1.2rem"
+        weight="600"
         style={{borderRadius:"20px"}}
       >
         <ItemH style={{ marginBottom: "0.6rem", justifyContent:"flex-start" }} >
-          <AiOutlineWarning size={28} />
-          <H2 color="#fff" fontSize="1.5rem" margin="0" style={{ marginLeft: "0.3rem" }}>
-            Note -
+          {/* <AiOutlineWarning size={28} /> */}
+          <H2 color="#fff" fontSize="1.5rem" margin="0"  weight="700" style={{ marginLeft: "0.3rem" }}>
+            REWARDS PROGRAM TO BE EXTENDED 84 WEEKS
           </H2>
         </ItemH>
-        A new proposal has been put forward in PUSH DAO, if approved staking
-        will be extended till Dec 31st, 2023. For more details please go to
+        A proposal is in final voting stage to extend the Program for 84 weeks more! Cast your vote
         <a
           style={{ color: "white", marginLeft: "4px" }}
-          href="https://gov.push.org/t/extend-the-push-eth-push-liquidity-rewards-program/1335"
+          href="https://snapshot.org/#/pushdao.eth/proposal/0x54092053eff30c3c304e45b575881945192e710bc9b3914bfe1d1eadcda3f114"
           target="_blank"
           rel="noopener noreferrer"
         >

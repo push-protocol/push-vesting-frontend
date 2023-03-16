@@ -231,13 +231,13 @@ function YieldFarming() {
         <ItemH style={{ marginBottom: "0.6rem", justifyContent:"flex-start" }} >
           {/* <AiOutlineWarning size={28} /> */}
           <H2 color="#fff" fontSize="1.5rem" margin="0"  weight="700" style={{ marginLeft: "0.3rem" }}>
-            REWARDS PROGRAM TO BE EXTENDED 84 WEEKS
+            REWARDS PROGRAM WILL BE EXTENDED 84 WEEKS!!
           </H2>
         </ItemH>
-        A proposal is in final voting stage to extend the Program for 84 weeks more! Cast your vote
+          The Push DAO has approved the extension of the Rewards Program for 84 more weeks! More info
         <a
           style={{ color: "white", marginLeft: "4px" }}
-          href="https://snapshot.org/#/pushdao.eth/proposal/0x54092053eff30c3c304e45b575881945192e710bc9b3914bfe1d1eadcda3f114"
+          href="https://medium.com/push-protocol/push-dao-extends-liquidity-rewards-program-26008926b05a"
           target="_blank"
           rel="noopener noreferrer"
         >

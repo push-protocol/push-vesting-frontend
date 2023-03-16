@@ -231,7 +231,7 @@ function YieldFarming() {
         <ItemH style={{ marginBottom: "0.6rem", justifyContent:"flex-start" }} >
           {/* <AiOutlineWarning size={28} /> */}
           <H2 color="#fff" fontSize="1.5rem" margin="0"  weight="700" style={{ marginLeft: "0.3rem" }}>
-            REWARDS PROGRAM WILL BE EXTENDED 84 WEEKS!!
+            REWARDS PROGRAM WILL BE EXTENDED BY 84 WEEKS!!
           </H2>
         </ItemH>
           The Push DAO has approved the extension of the Rewards Program for 84 more weeks! More info

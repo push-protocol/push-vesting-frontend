@@ -3,6 +3,7 @@ import React from "react";
 import styled, { css, keyframes } from "styled-components";
 import {Section, Content, Item, ItemH, ItemBreak, A, B, H1, H2, H3, Image, P, Span, Anchor, Button, Showoff, FormSubmision, Input, TextField} from 'components/SharedStyling';
 
+import { AiOutlineWarning } from 'react-icons/ai';
 import { BsChevronExpand } from 'react-icons/bs';
 
 import { AnimateOnChange } from "react-animation";
@@ -216,34 +217,66 @@ function YieldFarming() {
 
   return (
     <Section>
+      {/* Warning for incentive */}
+      <Span
+        padding="1rem 1.5rem"
+        margin="1rem"
+        bg="#CF1C84"
+        color="#fff"
+        textAlign="left"
+        size="1.2rem"
+        weight="600"
+        style={{borderRadius:"20px"}}
+      >
+        <ItemH style={{ marginBottom: "0.6rem", justifyContent:"flex-start" }} >
+          {/* <AiOutlineWarning size={28} /> */}
+          <H2 color="#fff" fontSize="1.5rem" margin="0"  weight="700" style={{ marginLeft: "0.3rem" }}>
+            REWARDS PROGRAM WILL BE EXTENDED BY 84 WEEKS!!
+          </H2>
+        </ItemH>
+          The Push DAO has approved the extension of the Rewards Program for 84 more weeks! More info
+        <a
+          style={{ color: "white", marginLeft: "4px" }}
+          href="https://medium.com/push-protocol/push-dao-extends-liquidity-rewards-program-26008926b05a"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          here
+        </a>
+      </Span>
       {poolStats ? (
         <>
           <Content theme="#f3f3f3">
             <ItemH margin="0px 15px 0px 15px" align="stretch">
-              <StatsCard
-                bg="#fff"
-              >
+              <StatsCard bg="#fff">
                 <StatsHeading bg="#e20880">Total Value Locked</StatsHeading>
                 <StatsContent>
-                  <StatsInnerTitle>{`$ ${numberWithCommas(poolStats.totalValueLocked.toFixed(2))}`}</StatsInnerTitle>
+                  <StatsInnerTitle>{`$ ${numberWithCommas(
+                    poolStats.totalValueLocked.toFixed(2)
+                  )}`}</StatsInnerTitle>
                 </StatsContent>
                 <StatsPreview color="#e20880">TVL</StatsPreview>
               </StatsCard>
 
-              <StatsCard
-                bg="#fff"
-              >
+              <StatsCard bg="#fff">
                 <StatsHeading bg="#35c5f3">PUSH Rewards Given</StatsHeading>
                 <StatsContent>
-                  <StatsInnerTitle>{numberWithCommas(formatTokens(poolStats.pushRewardsDistributed))}</StatsInnerTitle>
-                  <StatsInnerSub>out of {numberWithCommas(formatTokens(poolStats.totalDistributedAmount))}</StatsInnerSub>
+                  <StatsInnerTitle>
+                    {numberWithCommas(
+                      formatTokens(poolStats.pushRewardsDistributed)
+                    )}
+                  </StatsInnerTitle>
+                  <StatsInnerSub>
+                    out of{" "}
+                    {numberWithCommas(
+                      formatTokens(poolStats.totalDistributedAmount)
+                    )}
+                  </StatsInnerSub>
                 </StatsContent>
                 <StatsPreview color="#35c5f3">Rewarded</StatsPreview>
               </StatsCard>
 
-              <StatsCard
-                bg="#fff"
-              >
+              <StatsCard bg="#fff">
                 <StatsHeading bg="#674c9f">Time Left</StatsHeading>
                 <StatsContent>
                   <StatsInnerTitle>{formattedDuration}</StatsInnerTitle>
@@ -252,14 +285,19 @@ function YieldFarming() {
                 <StatsPreview color="#674c9f">time left</StatsPreview>
               </StatsCard>
 
-              <StatsCard
-                bg="#fff"
-              >
+              <StatsCard bg="#fff">
                 <StatsHeading bg="#000">PUSH Price</StatsHeading>
                 <StatsContent>
-                  <StatsInnerTitle>{`$ ${poolStats.pushPrice.toFixed(2)}`}</StatsInnerTitle>
+                  <StatsInnerTitle>{`$ ${poolStats.pushPrice.toFixed(
+                    2
+                  )}`}</StatsInnerTitle>
                   <StatsInnerSub>
-                    <a target="_blank" href="https://app.uniswap.org/#/swap?inputCurrency=0xf418588522d5dd018b425e472991e52ebbeeeeee">Uniswap</a>
+                    <a
+                      target="_blank"
+                      href="https://app.uniswap.org/#/swap?inputCurrency=0xf418588522d5dd018b425e472991e52ebbeeeeee"
+                    >
+                      Uniswap
+                    </a>
                   </StatsInnerSub>
                 </StatsContent>
                 <StatsPreview color="#000">UNISWAP</StatsPreview>
@@ -267,43 +305,40 @@ function YieldFarming() {
             </ItemH>
           </Content>
 
-          {!(lpPoolStats && userDataLP) && !(pushPoolStats && userDataPUSH)
-            ? <Item padding="20px">
-                <Loader type="Oval" color="#35c5f3" height={40} width={40} />
-              </Item>
-            : <Content padding="25px 0px">
+          {!(lpPoolStats && userDataLP) && !(pushPoolStats && userDataPUSH) ? (
+            <Item padding="20px">
+              <Loader type="Oval" color="#35c5f3" height={40} width={40} />
+            </Item>
+          ) : (
+            <Content padding="25px 0px">
               <ItemH margin="0px 10px 0px 10px" align="stretch">
-                {
-                  lpPoolStats && userDataLP ? (
-                    <PoolCard
-                      poolName={'Uniswap LP Pool (UNI-V2)'}
-                      poolAddress={addresses.yieldFarmLP}
-                      tokenAddress={addresses.epnsLPToken}
-                      getPoolStats={getPoolStats}
-                      getPUSHPoolStats={getLPPoolStats}
-                      getUserData={getUserDataLP}
-                      pushPoolStats={lpPoolStats}
-                      userData={userDataLP}
-                    />
-                  ) : null
-                }
-                {
-                  pushPoolStats && userDataPUSH ? (
-                    <PoolCard
-                      poolName={'Staking Pool (PUSH)'}
-                      poolAddress={addresses.yieldFarmPUSH}
-                      tokenAddress={addresses.epnsToken}
-                      getPoolStats={getPoolStats}
-                      getPUSHPoolStats={getPUSHPoolStats}
-                      getUserData={getUserDataPUSH}
-                      pushPoolStats={pushPoolStats}
-                      userData={userDataPUSH}
-                    />
-                  ) : null
-                }
+                {lpPoolStats && userDataLP ? (
+                  <PoolCard
+                    poolName={"Uniswap LP Pool (UNI-V2)"}
+                    poolAddress={addresses.yieldFarmLP}
+                    tokenAddress={addresses.epnsLPToken}
+                    getPoolStats={getPoolStats}
+                    getPUSHPoolStats={getLPPoolStats}
+                    getUserData={getUserDataLP}
+                    pushPoolStats={lpPoolStats}
+                    userData={userDataLP}
+                  />
+                ) : null}
+                {pushPoolStats && userDataPUSH ? (
+                  <PoolCard
+                    poolName={"Staking Pool (PUSH)"}
+                    poolAddress={addresses.yieldFarmPUSH}
+                    tokenAddress={addresses.epnsToken}
+                    getPoolStats={getPoolStats}
+                    getPUSHPoolStats={getPUSHPoolStats}
+                    getUserData={getUserDataPUSH}
+                    pushPoolStats={pushPoolStats}
+                    userData={userDataPUSH}
+                  />
+                ) : null}
               </ItemH>
             </Content>
-          }
+          )}
         </>
       ) : (
         <Item padding="40px">

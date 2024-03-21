@@ -400,3 +400,5 @@ node_modules
 bin_output
 logs
 dump.rdb
+node_modules
+packages/react-app/node_modules

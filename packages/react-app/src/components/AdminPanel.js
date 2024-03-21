@@ -1,18 +1,18 @@
-import React, { Component } from 'react'
-import moment from 'moment'
+import moment from 'moment';
+import React, { Component } from 'react';
 
+import { abis, addresses } from "@project/contracts";
 import styled, { css } from "styled-components";
-import { getTokenVesting, getMultisigWallet, getFundsDistributorFactory, getFundsDistributor, getReserves, getEPNSToken, getVestedReserves } from '../contracts'
-import { displayAmount, tokensToBn } from '../utils'
-import { addresses, abis } from "@project/contracts";
+import { getEPNSToken, getFundsDistributor, getFundsDistributorFactory, getMultisigWallet, getReserves, getTokenVesting, getVestedReserves } from '../contracts';
+import { displayAmount, tokensToBn } from '../utils';
 
-import { ContractLink, TransactionLink } from './Links'
-import Emoji from './Emoji'
-import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
-import { toast } from 'react-toastify';
+import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { ethers } from 'ethers';
+import { toast } from 'react-toastify';
+import Emoji from './Emoji';
 import FundsDistributorCard from "./FundsDistributorCard";
 import FundsDistributorFactoryCard from "./FundsDistributorFactoryCard";
+import { ContractLink, TransactionLink } from './Links';
 import VestedReservesCard from "./VestedReservesCard";
 
 const AdminPanel = () => {
@@ -29,6 +29,9 @@ const AdminPanel = () => {
   const [ confirmMultisigTxID, setConfirmMultisigTxID ] = React.useState("");
   const [ executeMultisigTxID, setExecuteMultisigTxID ] = React.useState("");
   const [ revokeMultisigTxID, setRevokeMultisigTxID ] = React.useState("");
+  const [ multisigFactoryContractAddress, setMultisigFactoryContractAddress ] = React.useState("");
+  const [ multisigBeneficiaryContractAddress, setMultisigBeneficiaryContractAddress ] = React.useState("");
+  const [ confirmDelegateAddress, setConfirmDelegateAddress ] = React.useState("");
 
   const [ loader, setLoader ] = React.useState(false)
 
@@ -42,6 +45,47 @@ const AdminPanel = () => {
     setLoader(false)
   }
 
+  async function onDelegateVotes() {
+    try {
+      const epnsToken = getEPNSToken(library, account);
+      const data = (await epnsToken.populateTransaction.delegate(confirmDelegateAddress)).data
+      startLoader()
+
+      const tx = await multisigContract.submitTransaction(addresses.epnsToken, 0, data);
+
+      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (e) {
+      toast.dark(e.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      stopLoader()
+    }
+  }
+
   async function onRelease() {
     try {
       const tokenVesting = await getTokenVesting(releaseVestingAddress, library, account);
@@ -49,6 +93,49 @@ const AdminPanel = () => {
       startLoader()
 
       const tx = await multisigContract.submitTransaction(tokenVesting.address, 0, data);
+
+      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (e) {
+      toast.dark(e.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      stopLoader()
+    }
+  }
+
+  async function onCustomFunctionExecute() {
+    await setMultisigAddress("0x4957091F11Ca0A298a6656607Cc3B973cebb1F5c");
+
+    try {
+      const multisigContractInstance = await getMultisigWallet(addresses.epnsMultisig, library, account);
+      startLoader()
+      const tx = await multisigContract.submitTransaction("0x19Ff5f2C05aC6a303aF6d5002C99686e823EBE72", ethers.utils.parseUnits("0.01", "ether"), ethers.constants.HashZero);
+
+      //const tx = await multisigContractInstance.executeTransaction(executeMultisigTxID);
 
       toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
         position: "bottom-right",
@@ -245,6 +332,90 @@ const AdminPanel = () => {
     }
   }
 
+  async function onMultisigToSafeOwnerChange() {
+    try {
+      const fundsDistributorFactoryInstance = await getFundsDistributorFactory(multisigFactoryContractAddress, library, account);
+      const data = (await fundsDistributorFactoryInstance.populateTransaction.transferOwnership(addresses.pushSafe)).data
+      const multisigContractInstance = await getMultisigWallet(addresses.epnsMultisig, library, account);
+      startLoader()
+
+      const tx = await multisigContractInstance.submitTransaction(multisigFactoryContractAddress, 0, data);
+
+      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (e) {
+      toast.dark(e.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      stopLoader()
+    }
+  }
+
+  async function onBeneficiaryChangedToSafe() {
+    try {
+      const fundsDistributorInstance = await getVestedReserves(multisigBeneficiaryContractAddress, library, account);
+      const data = (await fundsDistributorInstance.populateTransaction.setBeneficiary(addresses.pushSafe)).data
+      const multisigContractInstance = await getMultisigWallet(addresses.epnsMultisig, library, account);
+      startLoader()
+
+      const tx = await multisigContractInstance.submitTransaction(multisigBeneficiaryContractAddress, 0, data);
+
+      toast.dark("Transaction Sent - "+ TransactionLink(tx.hash), {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const receipt = await tx.wait()
+      toast.dark("Transaction Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (e) {
+      toast.dark(e.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      stopLoader()
+    }
+  }
+
   async function onTransferTokens() {
     try {
       const commUnlockedReserves = await getReserves(library, account);
@@ -366,6 +537,14 @@ const AdminPanel = () => {
             ): null
           }
 
+      <Card>
+        <CardTitle>Custom Multisig Function</CardTitle>
+        <Action>
+          <Label>Custom Function Execute</Label>
+          <Button onClick={onCustomFunctionExecute}>Confirm</Button>
+        </Action>
+      </Card>
+
         <Card>
           <CardTitle>Manage Multisig Signing</CardTitle>
           <Action>
@@ -383,6 +562,26 @@ const AdminPanel = () => {
             <Input placeholder="Multisig Id to Revoke" onChange={(e) => setRevokeMultisigTxID(e.target.value)} />
             <Button onClick={onMultisigRevoke}>Revoke</Button>
           </Action>
+          <Action>
+            <Label>Transfer Ownership</Label>
+            <Input placeholder="Multisig Factory Contract Address to change to Push safe" onChange={(e) => setMultisigFactoryContractAddress(e.target.value)} />
+            <Button onClick={onMultisigToSafeOwnerChange}>Change Owner</Button>
+          </Action>
+          <Action>
+            <Label>Change Beneficiary</Label>
+            <Input placeholder="Change Beneficiary to Push Safe" onChange={(e) => setMultisigBeneficiaryContractAddress(e.target.value)} />
+            <Button onClick={onBeneficiaryChangedToSafe}>Change Beneficiary</Button>
+          </Action>
+        </Card>
+
+        <Card>
+          <CardTitle>Delegate Votes of Multisig</CardTitle>
+          <Action>
+            <Label>Delegate Votes of Multisig</Label>
+            <Input placeholder="Delegate Multisig Votes to Address" onChange={(e) => setConfirmDelegateAddress(e.target.value)} />
+            <Button onClick={onDelegateVotes}>Delegate</Button>
+          </Action>
+
         </Card>
 
         <Card>

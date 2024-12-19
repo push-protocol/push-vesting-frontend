@@ -1,5 +1,5 @@
-import erc20Abi from "./abis/ERC20";
-import ownableAbi from "./abis/Ownable";
+import erc20Abi from "./abis/erc20";
+import ownableAbi from "./abis/ownable";
 import epnscoreAbi from "./abis/epnscore";
 import epnsAbi from "./abis/EPNS.json";
 import tokenVestingAbi from "./abis/TokenVesting.json";

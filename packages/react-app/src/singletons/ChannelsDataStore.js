@@ -1,8 +1,8 @@
 import EPNSCoreHelper from 'helpers/EPNSCoreHelper';
 import { ethers } from "ethers";
-import { bigNumber, bigNumberify } from 'ethers/utils'
+import { utils } from "ethers";
 
-import { addresses, abis } from "@project/contracts";
+const { bigNumberify } = utils;
 
 // STATIC SINGLETON
 export const ChannelEvents = {

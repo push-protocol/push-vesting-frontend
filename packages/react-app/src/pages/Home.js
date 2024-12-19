@@ -48,70 +48,70 @@ function Home({ setBadgeCount, bellPressed }) {
   return (
     <Container>
       <Controls>
-        <ControlButton index={0} active={controlAt == 0 ? 1 : 0} border="#e20880"
+        {/* <ControlButton index={0} active={controlAt == 0 ? 1 : 0} border="#e20880"
           onClick={() => {
             userClickedAt(0)
           }}
         >
           <ControlImage src="./svg/yield.svg" active={controlAt == 0 ? 1 : 0} />
           <ControlText active={controlAt == 0 ? 1 : 0}>Yield Farming</ControlText>
+        </ControlButton> */}
+
+        <ControlButton index={0} active={controlAt == 0 ? 1 : 0} border="#35c5f3"
+          onClick={() => {
+            userClickedAt(0)
+          }}
+        >
+          <ControlImage src="./svg/investor.svg" active={controlAt == 0 ? 1 : 0} />
+          <ControlText active={controlAt == 0 ? 1 : 0}>Investors</ControlText>
         </ControlButton>
 
-        <ControlButton index={1} active={controlAt == 1 ? 1 : 0} border="#35c5f3"
+        <ControlButton index={1} active={controlAt == 1 ? 1 : 0} border="#674c9f"
           onClick={() => {
             userClickedAt(1)
           }}
         >
-          <ControlImage src="./svg/investor.svg" active={controlAt == 1 ? 1 : 0} />
-          <ControlText active={controlAt == 1 ? 1 : 0}>Investors</ControlText>
-        </ControlButton>
-
-        <ControlButton index={2} active={controlAt == 2 ? 1 : 0} border="#674c9f"
-          onClick={() => {
-            userClickedAt(2)
-          }}
-        >
-          <ControlImage src="./svg/advisor.svg" active={controlAt == 2 ? 1 : 0} />
-          <ControlText active={controlAt == 2 ? 1 : 0}>Advisors/Team</ControlText>
+          <ControlImage src="./svg/advisor.svg" active={controlAt == 1 ? 1 : 0} />
+          <ControlText active={controlAt == 1 ? 1 : 0}>Advisors/Team</ControlText>
         </ControlButton>
 
         {isAccountAdmin() &&
           <>
+            <ControlButton index={2} active={controlAt == 2 ? 1 : 0} border="#e20880"
+              onClick={() => {
+                userClickedAt(2)
+              }}
+            >
+              <ControlImage src="./svg/channeladmin.svg" active={controlAt == 2 ? 1 : 0} />
+              <ControlText active={controlAt == 2 ? 1 : 0}>Foundation</ControlText>
+            </ControlButton>
+
             <ControlButton index={3} active={controlAt == 3 ? 1 : 0} border="#e20880"
               onClick={() => {
                 userClickedAt(3)
               }}
             >
               <ControlImage src="./svg/channeladmin.svg" active={controlAt == 3 ? 1 : 0} />
-              <ControlText active={controlAt == 3 ? 1 : 0}>Foundation</ControlText>
-            </ControlButton>
-
-            <ControlButton index={4} active={controlAt == 4 ? 1 : 0} border="#e20880"
-              onClick={() => {
-                userClickedAt(4)
-              }}
-            >
-              <ControlImage src="./svg/channeladmin.svg" active={controlAt == 4 ? 1 : 0} />
-              <ControlText active={controlAt == 4 ? 1 : 0}>Admin Controls</ControlText>
+              <ControlText active={controlAt == 3 ? 1 : 0}>Admin Controls</ControlText>
             </ControlButton>
           </>
         }
       </Controls>
 
       <Interface>
-        {controlAt == 0 &&
+        {/* {controlAt == 0 &&
           <YieldFarming />
-        }
-        {controlAt == 1 &&
+        } */}
+        {controlAt == 0 &&
           <TokenVestingApp multipleVesting={true} vestingAddresses={null} loaderTheme="#35c5f3" loadAPR={true} actionable={() => userClickedAt(0)} />
         }
-        {controlAt == 2 &&
+        {controlAt == 1 &&
           <TokenVestingApp multipleVesting={false} vestingAddresses={null} loaderTheme="#674c9f" loadAPR={true} actionable={() => userClickedAt(0)} />
         }
-        {controlAt == 3 && isAccountAdmin() &&
+        {controlAt == 2 && isAccountAdmin() &&
           <TokenVestingApp multipleVesting={true} vestingAddresses={[addresses.vestedReserves.foundationA, addresses.vestedReserves.foundationB]} loaderTheme="#e20880" loadAPR={false} actionable={null} />
         }
-        {controlAt == 4 && isAccountAdmin() &&
+        {controlAt == 3 && isAccountAdmin() &&
           <AdminPanel />
         }
       </Interface>

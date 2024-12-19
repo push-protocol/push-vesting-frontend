@@ -428,7 +428,7 @@ const VestingActions = ({ multisigContract, address, token, details, getData, se
            }
            {!loading ?
              <>
-               {poolStats &&
+               {/* {poolStats &&
                  <Item self="stretch" align="stretch">
                    <Content theme="#f3f3f3" padding="40px 0px 0px 0px">
                      <ItemH margin="0px 15px 0px 15px" align="stretch">
@@ -462,7 +462,7 @@ const VestingActions = ({ multisigContract, address, token, details, getData, se
                     <FullButton onClick={() => {actionable()}}>Stake Now!</FullButton>
                   </Content>
                  </Item>
-               }
+               } */}
 
                <Item self="stretch" align="stretch" padding="20px 40px 10px 40px">
                  <Action>
